@@ -189,7 +189,7 @@ rule("Buttons")
 	actions
 	{
 		Create Effect(All Players(All Teams), Sphere, Color(Yellow), Vector(79.734, 1, 22.430), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Green), Vector(77.676, 1, 20.970), 0.400, Visible To Position and Radius);
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(77.676, 1, 20.970), 0.400, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(79.734, -1, 22.430), 0.400, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Vector(77.676, -1, 20.970), 0.400, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(56.613, -0.574, -7.100), 1, Visible To Position and Radius);
@@ -702,7 +702,7 @@ rule("Mercy Button")
 	}
 }
 
-rule("Orisa Button")
+rule("Kiriko Button")
 {
 	event
 	{
@@ -721,7 +721,12 @@ rule("Orisa Button")
 
 	actions
 	{
-		Create Dummy Bot(Hero(Orisa), Team 1, -1, Position Of(Event Player), Facing Direction Of(Event Player));
+		Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+		
+		Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		Small Message(Global.PlayerEventInfo, 1);
 	}
 }
 
@@ -1366,7 +1371,8 @@ disabled rule("Teleport")
 
 	actions
 	{
-		Teleport(Event Player, Position Of(Event Player) + Facing Direction Of(Event Player) * 3);
+		Set Facing(Event Player, Vector(0.010, 0.020, 1), To World);
+		Teleport(Event Player, Vector(78.75,-2,16.28));
 	}
 }
 
@@ -1803,13 +1809,13 @@ rule("Mercy Bot Dies")
 	}
 }
 
-rule("Friendly Orisa")
+rule("Kiriko's Support")
 {
 	event
 	{
 		Ongoing - Each Player;
 		Team 1;
-		Orisa;
+		Kiriko;
 	}
 
 	conditions
@@ -1819,10 +1825,21 @@ rule("Friendly Orisa")
 
 	actions
 	{
-		Set Ultimate Charge(Event Player, 100);
+		//Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		//Small Message(Global.PlayerEventInfo, 1);
+		Wait(0.5, Ignore Condition);
+		
+		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo), 1000, To World, Direction and Turn Rate);
 		Wait(0.050, Ignore Condition);
+		Set Ultimate Charge(Event Player, 100);
+		Wait(0.250, Ignore Condition);
+		Set Status(Event Player, Null, Phased Out, 5);
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
 		Press Button(Event Player, Button(Ultimate));
-		Wait(15, Ignore Condition);
+		Wait(0.5, Ignore Condition);
+		Teleport(Event Player, Vector(47,20,40));
+		Wait(12-0.5, Ignore Condition);
 		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
 	}
 }
