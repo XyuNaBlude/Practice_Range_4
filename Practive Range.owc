@@ -20,6 +20,7 @@ settings
 			Game Mode Start: Manual
 			Hero Limit: Off
 			Respawn Time Scalar: 25%
+			Tank Role Passive Health Bonus: Always Enabled
 		}
 	}
 
@@ -145,7 +146,7 @@ rule("Global Variables")
 		"Roadhog"
 		Global.Z[4] = 0;
 		"Tracer"
-		Global.Z[5] = 0;
+		Global.Z[5] = 1;
 		"Lucio"
 		Global.Z[6] = 0;
 		"Mercy (requires Pharah)"
@@ -850,6 +851,7 @@ rule("Sombra Button")
 
 	actions
 	{
+		Heal(Event Player, Null, 1000);
 		Skip If(Global.Z[11] == 1, 8);
 		Skip If(Number Of Players(Team 2) < 5, 2);
 		Wait(0.050, Ignore Condition);
@@ -1328,6 +1330,7 @@ rule("Jump Pad")
 	conditions
 	{
 		Distance Between(Position Of(Event Player), Vector(56.613, -0.574, -7.100)) <= 2;
+		Is Button Held(Event Player, Button(Jump)) == True;
 	}
 
 	actions
