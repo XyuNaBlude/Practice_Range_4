@@ -644,8 +644,12 @@ rule("Baptiste Button")
 
 	actions
 	{
-		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Position Of(Event Player), Facing Direction Of(Event Player));
+		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 		Global.PlayerEventInfo = Event Player;
+		
+		Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		Small Message(Global.PlayerEventInfo, 1);
 	}
 }
 
@@ -899,13 +903,22 @@ rule("Baptiste Amplification Matrix")
 
 	actions
 	{
+		//Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		//Small Message(Global.PlayerEventInfo, 1);
+		Wait(0.5, Ignore Condition);
+		
 		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo), 1000, To World, Direction and Turn Rate);
 		Set Ultimate Charge(Event Player, 100);
-		Wait(1, Ignore Condition);
+		Set Status(Event Player, Null, Phased Out, 5);
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
+		Wait(0.1, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
 		Wait(0.050, Ignore Condition);
 		Press Button(Event Player, Button(Primary Fire));
-		Wait(10.500, Ignore Condition);
+		Wait(0.1, Ignore Condition);
+		Teleport(Event Player, Vector(47,20,40));
+		Wait(10.5-0.1, Ignore Condition);
 		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
 	}
 }
