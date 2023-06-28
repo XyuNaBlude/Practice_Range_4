@@ -2,8 +2,8 @@ settings
 {
 	main
 	{
-		Description: "Practice Range 2.2 by PMAJellies - Modified to 3.3 by Scales # 11791 - to 3.5 by github.com/Quota | Follow @PMAJellies for updates"
-		Mode Name: "Practice Range 3.5"
+		Description: "Modified Practice Range 2.2 by PMAJellies \n3.3 by Scales #11791 \n3.5 by github.com/Quota \n4.1 by Kocou #21168"
+		Mode Name: "Practice Range 4.1"
 	}
 
 	lobby
