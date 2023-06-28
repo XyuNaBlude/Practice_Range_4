@@ -9,6 +9,8 @@ settings
 	lobby
 	{
 		Allow Players Who Are In Queue: Yes
+		Max Spectators: 0
+		Max Team 1 Players: 1
 	}
 
 	modes
@@ -104,14 +106,14 @@ variables
 		5: PlayerEventInfo
 		6: MercyButton
 		7: ReaperDirection
-		17:	Rnd
-		19:	Time
-		25:	BotToggle
-		
+		17: Rnd
+		19: Time
+		25: BotToggle
+
 	player:
-		8:	AI
-		17:	Rnd
-		19:	Tmp
+		8: AI
+		17: Rnd
+		19: Tmp
 }
 
 rule("Free Ult [Crouch + Interact]")
@@ -955,8 +957,8 @@ rule("Mercy Pocket P1")
 
 	actions
 	{
-		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Position Of(Global.PlayerEventInfo)), 1000, To World,
-			Direction and Turn Rate);
+		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Position Of(Global.PlayerEventInfo)), 1000, To World, Direction and Turn Rate);
+		Set Weapon(Event Player, 1);
 		Start Holding Button(Event Player, Button(Secondary Fire));
 	}
 }
@@ -993,8 +995,7 @@ rule("Mercy Pocket P3")
 
 	conditions
 	{
-		(Is In Line of Sight(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo), Barriers Do Not Block LOS) == False || Distance Between(
-			Event Player, Position Of(Event Player)) >= 14) == True;
+		(Is In Line of Sight(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo), Barriers Do Not Block LOS) == False || Distance Between(Event Player, Position Of(Event Player)) >= 14) == True;
 		Is Dummy Bot(Event Player) == True;
 	}
 
