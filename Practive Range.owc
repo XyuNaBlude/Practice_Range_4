@@ -109,6 +109,8 @@ variables
 		7: ReaperDirection
 		11: Numz_DamageDealtTotal
 		12: Numz_DamageTotalTimer
+		13: Numz_HealDealtTotal
+		14: Numz_HealTotalTimer
 		
 	player:
 		1:	Tmp
@@ -118,6 +120,9 @@ variables
 		12: Numz_DamageReceivedLast
 		13: Numz_DamageLastTimer
 		14: Numz_DamageWasCritical
+		15: Numz_HealReceivedLast
+		16: Numz_HealTooltipPos
+		17: Numz_HealLastTimer
 }
 
 rule("Free Ult [Crouch + Interact]")
@@ -304,6 +309,14 @@ rule("Numberz – HUD (Init)")
 			Null,Null,
 			Top,Null,Color(Red),Null,Null, Visible To and String, Default Visibility
 		);
+		
+		Create HUD Text
+		(
+			Filtered Array(Event Player, Global.Numz_HealTotalTimer>0),
+			Round To Integer(Global.Numz_HealDealtTotal, To Nearest),
+			Null,Null,
+			Top,Null,Color(Yellow),Null,Null, Visible To and String, Default Visibility
+		);
 	}
 }
 
@@ -381,6 +394,90 @@ rule("Numberz - Damage: Timer Run out")
 	actions
 	{
 		Global.Numz_DamageDealtTotal = 0;
+	}
+}
+
+rule("Numberz - Heal: Init")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	actions
+	{
+		if (Team Of(Event Player)==Team 1);
+			Create In-World Text
+			(
+				Filtered Array(All Players(All Teams),Event Player.Numz_HealLastTimer > 0),
+				Event Player.Numz_HealReceivedLast,
+				Event Player.Numz_HealTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(Yellow),
+				Default Visibility
+			);
+		else;
+			Create In-World Text
+			(
+				Filtered Array(All Players(All Teams),Event Player.Numz_HealLastTimer > 0),
+				Event Player.Numz_HealReceivedLast,
+				Event Player.Numz_HealTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(Orange),
+				Default Visibility
+			);
+		end;
+	}
+}
+
+rule("Numberz - Heal: Received Event")
+{
+	event
+	{
+		Player Received Healing;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Event Healing > 0;
+	}
+	
+	actions
+	{
+		if (Healer == Host Player);
+			Global.Numz_HealDealtTotal += Event Healing;
+			Global.Numz_HealTotalTimer = 2;
+			Chase Global Variable Over Time(Numz_HealTotalTimer, 0, 2, None);
+		End;
+		if (Event Healing>10);
+			Event Player.Numz_HealReceivedLast=Round To Integer(Event Healing, Down);
+		else;
+			Event Player.Numz_HealReceivedLast=Event Healing;
+		End;
+		Event Player.Numz_HealLastTimer = 1;
+		Chase Player Variable Over Time(Event Player, Numz_HealLastTimer, 0, 1, None);
+		Event Player.Numz_HealTooltipPos = Eye Position(Event Player) + Vector(0.25, 0.5, 0);
+		Chase Player Variable Over Time(Event Player, Numz_HealTooltipPos, Event Player.Numz_HealTooltipPos + Vector(1.25, 1.5, 0), 4, None);
+	}
+}
+
+rule("Numberz - Heal: Timer Run out")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Global.Numz_HealTotalTimer <= 0;
+	}
+
+	actions
+	{
+		Global.Numz_HealDealtTotal = 0;
 	}
 }
 
