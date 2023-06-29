@@ -1773,6 +1773,8 @@ rule("Mercy Bot Movement")
 	{
 		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Players On Hero(Hero(Pharah), Team 2))), 300,
 			To World, Direction and Turn Rate);
+		Set Weapon(Event Player, 1);
+		Wait(0.1,Ignore Condition);
 		Start Holding Button(Event Player, Button(Primary Fire));
 		Start Holding Button(Event Player, Button(Jump));
 		Wait(Random Real(0.500, 1.500), Ignore Condition);
