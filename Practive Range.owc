@@ -1859,7 +1859,7 @@ rule("Friendly Pharah Bot Health")
 	actions
 	{
 		Set Max Health(Event Player, 1000);
-		Set Healing Received(Event Player, 0.010);
+		disabled Set Healing Received(Event Player, 0.010);
 		Wait(0.050, Ignore Condition);
 		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Closest Player To(Vector(61.797, 0.475,
 			28.245), Team 1))), 800, To World, Direction and Turn Rate);
