@@ -700,13 +700,16 @@ rule("Mercy Button")
 
 	actions
 	{
-		Skip If(Global.PlayerEventInfo == Event Player, 3);
-		Create Dummy Bot(Hero(Mercy), Team 1, -1, Position Of(Event Player), Direction Towards(Position Of(Event Player), Eye Position(
-			Event Player)));
-		Global.PlayerEventInfo = Event Player;
-		Abort;
-		Destroy Dummy Bot(Team 1, Slot Of(Players On Hero(Hero(Mercy), Team 1)));
-		Global.PlayerEventInfo = Null;
+		if (Global.PlayerEventInfo != Event Player);
+			Create Dummy Bot(Hero(Mercy), Team 1, -1, Vector(84,-3,18), Direction Towards(Position Of(Event Player), Eye Position(Event Player)));
+			Wait(0.25, Ignore Condition);
+			Set Status(Last Created Entity, Null, Phased Out, 9999);
+			Teleport(Last Created Entity, Position Of(Event Player - Vector(1,1,1)));
+			Global.PlayerEventInfo = Event Player;
+		else;
+			Destroy Dummy Bot(Team 1, Slot Of(Players On Hero(Hero(Mercy), Team 1)));
+			Global.PlayerEventInfo = Null;
+		End;
 	}
 }
 
