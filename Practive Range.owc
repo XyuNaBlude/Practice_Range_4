@@ -1856,9 +1856,9 @@ rule("Kiriko's Support")
 		Set Status(Event Player, Null, Phased Out, 5);
 		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
 		Press Button(Event Player, Button(Ultimate));
-		Wait(0.5, Ignore Condition);
+		Wait(0.75, Ignore Condition);
 		Teleport(Event Player, Vector(47,20,40));
-		Wait(12-0.5, Ignore Condition);
+		Wait(12-0.75, Ignore Condition);
 		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
 	}
 }
