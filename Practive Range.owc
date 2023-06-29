@@ -107,11 +107,17 @@ variables
 		5:	Time
 		6: MercyButton
 		7: ReaperDirection
+		11: Numz_DamageDealtTotal
+		12: Numz_DamageTotalTimer
 		
 	player:
 		1:	Tmp
 		2:	Rnd
 		6:	AI
+		11: Numz_DamageTooltipPos
+		12: Numz_DamageReceivedLast
+		13: Numz_DamageLastTimer
+		14: Numz_DamageWasCritical
 }
 
 rule("Free Ult [Crouch + Interact]")
@@ -277,6 +283,104 @@ disabled rule("Debug")
 			Visible To and String, Default Visibility);
 		Create HUD Text(Event Player, Position Of(Event Player), Null, Null, Left, 0, Color(White), Color(White), Color(White),
 			Visible To and String, Default Visibility);
+	}
+}
+
+rule("Numberz – HUD (Init)")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	actions
+	{
+		Create HUD Text
+		(
+			Filtered Array(Event Player, Global.Numz_DamageTotalTimer>0),
+			Round To Integer(Global.Numz_DamageDealtTotal, To Nearest),
+			Null,Null,
+			Top,Null,Color(Red),Null,Null, Visible To and String, Default Visibility
+		);
+	}
+}
+
+rule("Numberz - Damage: Init")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	actions
+	{		
+		Create In-World Text
+		(
+			Filtered Array(All Players(All Teams), Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == False),
+			Event Player.Numz_DamageReceivedLast,
+			Event Player.Numz_DamageTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(White),
+			Default Visibility
+		);
+		Create In-World Text
+		(
+			Filtered Array(All Players(All Teams), Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == True),
+			Event Player.Numz_DamageReceivedLast,
+			Event Player.Numz_DamageTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(Red),
+			Default Visibility
+		);
+	}
+}
+
+rule("Numberz - Damage: Received Event")
+{
+	event
+	{
+		Player Took Damage;
+		All;
+		All;
+	}
+
+	actions
+	{
+		if (Attacker==Host Player);
+			Global.Numz_DamageDealtTotal += Event Damage;
+			Global.Numz_DamageTotalTimer = 2;
+			Chase Global Variable Over Time(Numz_DamageTotalTimer, 0, 2, None);
+		End;
+		if (Event Damage>10);
+			Event Player.Numz_DamageReceivedLast=Round To Integer(Event Damage, Down);
+		else;
+			Event Player.Numz_DamageReceivedLast=Event Damage;
+		End;
+		Event Player.Numz_DamageLastTimer = 1;
+		Chase Player Variable Over Time(Event Player, Numz_DamageLastTimer, 0, 1, None);
+		Event Player.Numz_DamageTooltipPos = Eye Position(Event Player) + Vector(0, 0.5, 0);
+		Chase Player Variable Over Time(Event Player, Numz_DamageTooltipPos, Event Player.Numz_DamageTooltipPos + Vector(0, 1.5, 0), 4, None);
+		Event Player.Numz_DamageWasCritical = Event Was Critical Hit;
+	}
+}
+
+rule("Numberz - Damage: Timer Run out")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Global.Numz_DamageTotalTimer <= 0;
+	}
+
+	actions
+	{
+		Global.Numz_DamageDealtTotal = 0;
 	}
 }
 
