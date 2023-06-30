@@ -238,7 +238,7 @@ rule("Buttons")
 	}
 }
 
-rule("Hud")
+disabled rule("Hud")
 {
 	event
 	{
