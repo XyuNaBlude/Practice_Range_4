@@ -1481,7 +1481,6 @@ rule("Roadhog Bot Timer")
 
 	actions
 	{
-		Destroy All In-World Text;
 		Wait(0.016, Ignore Condition);
 		Global.Time = 10;
 		Create In-World Text(All Players(All Teams), Custom String("Time: {0}s", Global.Time), Vector(79.648, 11, -5.662), 3,
@@ -1494,7 +1493,7 @@ rule("Roadhog Bot Timer")
 		Wait(1, Ignore Condition);
 		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Event Player, 100);
 		Wait(1, Ignore Condition);
-		Destroy All In-World Text;
+		Destroy In-World Text(Last Text ID);
 		Set Status(Event Player, Null, Invincible, 3);
 		Set Status(Event Player, Null, Phased Out, 3);
 		Wait(0.016, Ignore Condition);
@@ -1505,7 +1504,7 @@ rule("Roadhog Bot Timer")
 		Wait(0.016, Ignore Condition);
 		Heal(Event Player, Null, 50000);
 		Teleport(Event Player, Vector(79.630, 8.667, -5.675));
-		Destroy All In-World Text;
+		Destroy In-World Text(Last Text ID);
 	}
 }
 
