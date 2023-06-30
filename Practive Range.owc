@@ -197,6 +197,26 @@ rule("Global Variables")
 	}
 }
 
+rule("Tooltips, Avatars")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	actions
+	{
+		"Controls"
+		Create In-World Text
+		(
+			Players Within Radius(Vector(52.43,4.5,27.44),10, All Teams, Surfaces),
+			Custom String("Controls: \n• 'Crouch'+'Interact' – Ult recharge \n• 'Voicelines' to call supports \n· 'Crouch'+'Help!' – ???\n\n~Have Fun!~"),
+			Vector(52.43,4.5,27.44),
+			1, Clip Against Surfaces, Visible To, Color(Lime Green), Default Visibility
+		);
+	}
+}
+
 rule("Buttons")
 {
 	event
@@ -235,7 +255,7 @@ rule("Buttons")
 	}
 }
 
-rule("Hud")
+disabled rule("Hud")
 {
 	event
 	{
