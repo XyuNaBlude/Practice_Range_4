@@ -9,6 +9,8 @@ settings
 	lobby
 	{
 		Allow Players Who Are In Queue: Yes
+		Max Spectators: 0
+		Max Team 1 Players: 1
 	}
 
 	modes
@@ -107,11 +109,22 @@ variables
 		5: Time
 		6: MercyButton
 		7: ReaperDirection
+		11: Numz_DamageDealtTotal
+		12: Numz_DamageTotalTimer
+		13: Numz_HealDealtTotal
+		14: Numz_HealTotalTimer
 		
 	player:
 		1: Tmp
 		2: Rnd
-		6: AI
+		7: AI
+		11: Numz_DamageTooltipPos
+		12: Numz_DamageReceivedLast
+		13: Numz_DamageLastTimer
+		14: Numz_DamageWasCritical
+		15: Numz_HealReceivedLast
+		16: Numz_HealTooltipPos
+		17: Numz_HealLastTimer
 }
 
 rule("Free Ult [Crouch + Interact]")
@@ -179,6 +192,26 @@ rule("Global Variables")
 	}
 }
 
+rule("Tooltips, Avatars")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	actions
+	{
+		"Controls"
+		Create In-World Text
+		(
+			Players Within Radius(Vector(52.43,4.5,27.44),10, All Teams, Surfaces),
+			Custom String("Controls: \n• 'Crouch'+'Interact' – Ult recharge \n• 'Voicelines' to call supports \n· 'Crouch'+'Help!' – ???\n\n~Have Fun!~"),
+			Vector(52.43,4.5,27.44),
+			1, Clip Against Surfaces, Visible To, Color(Lime Green), Default Visibility
+		);
+	}
+}
+
 rule("Buttons")
 {
 	event
@@ -189,14 +222,13 @@ rule("Buttons")
 	actions
 	{
 		Create Effect(All Players(All Teams), Sphere, Color(Yellow), Vector(79.734, 1, 22.430), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Green), Vector(77.676, 1, 20.970), 0.400, Visible To Position and Radius);
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(77.676, 1, 20.970), 0.400, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(79.734, -1, 22.430), 0.400, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Vector(77.676, -1, 20.970), 0.400, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(56.613, -0.574, -7.100), 1, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Purple), Vector(51.968, -0.233, 11.827), 0.300,
-			Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Sky Blue), Vector(55.217, 8.879, -22.137), 0.300,
-			Visible To Position and Radius);
+		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(79.92, -0.574, 8.42), 1, Visible To Position and Radius);
+		Create Effect(All Players(All Teams), Sphere, Color(Purple), Vector(51.968, -0.233, 11.827), 0.300, Visible To Position and Radius);
+		Create Effect(All Players(All Teams), Sphere, Color(Sky Blue), Vector(55.217, 8.879, -22.137), 0.300, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(85.085, -0.776, 10.119), 0.300, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(77.125, -2.827, 35.112), 0.300, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(White), Vector(85.002, 8.413, -5.243), 0.300, Visible To Position and Radius);
@@ -218,7 +250,7 @@ rule("Buttons")
 	}
 }
 
-rule("Hud")
+disabled rule("Hud")
 {
 	event
 	{
@@ -277,6 +309,196 @@ disabled rule("Debug")
 			Visible To and String, Default Visibility);
 		Create HUD Text(Event Player, Position Of(Event Player), Null, Null, Left, 0, Color(White), Color(White), Color(White),
 			Visible To and String, Default Visibility);
+	}
+}
+
+rule("Numberz – HUD (Init)")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	actions
+	{
+		Create HUD Text
+		(
+			Filtered Array(Event Player, Global.Numz_DamageTotalTimer>0),
+			Round To Integer(Global.Numz_DamageDealtTotal, To Nearest),
+			Null,Null,
+			Top,Null,Color(Red),Null,Null, Visible To and String, Default Visibility
+		);
+		
+		Create HUD Text
+		(
+			Filtered Array(Event Player, Global.Numz_HealTotalTimer>0),
+			Round To Integer(Global.Numz_HealDealtTotal, To Nearest),
+			Null,Null,
+			Top,Null,Color(Yellow),Null,Null, Visible To and String, Default Visibility
+		);
+	}
+}
+
+rule("Numberz - Damage: Init")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	actions
+	{		
+		Create In-World Text
+		(
+			Filtered Array(All Players(All Teams), Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == False),
+			Event Player.Numz_DamageReceivedLast,
+			Event Player.Numz_DamageTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(White),
+			Default Visibility
+		);
+		Create In-World Text
+		(
+			Filtered Array(All Players(All Teams), Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == True),
+			Event Player.Numz_DamageReceivedLast,
+			Event Player.Numz_DamageTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(Red),
+			Default Visibility
+		);
+	}
+}
+
+rule("Numberz - Damage: Received Event")
+{
+	event
+	{
+		Player Took Damage;
+		All;
+		All;
+	}
+
+	actions
+	{
+		if (Attacker==Host Player);
+			Global.Numz_DamageDealtTotal += Event Damage;
+			Global.Numz_DamageTotalTimer = 2;
+			Chase Global Variable Over Time(Numz_DamageTotalTimer, 0, 2, None);
+		End;
+		if (Event Damage>10);
+			Event Player.Numz_DamageReceivedLast=Round To Integer(Event Damage, Down);
+		else;
+			Event Player.Numz_DamageReceivedLast=Event Damage;
+		End;
+		Event Player.Numz_DamageLastTimer = 1;
+		Chase Player Variable Over Time(Event Player, Numz_DamageLastTimer, 0, 1, None);
+		Event Player.Numz_DamageTooltipPos = Eye Position(Event Player) + Vector(0, 0.5, 0);
+		Chase Player Variable Over Time(Event Player, Numz_DamageTooltipPos, Event Player.Numz_DamageTooltipPos + Vector(0, 1.5, 0), 4, None);
+		Event Player.Numz_DamageWasCritical = Event Was Critical Hit;
+	}
+}
+
+rule("Numberz - Damage: Timer Run out")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Global.Numz_DamageTotalTimer <= 0;
+	}
+
+	actions
+	{
+		Global.Numz_DamageDealtTotal = 0;
+	}
+}
+
+rule("Numberz - Heal: Init")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	actions
+	{
+		if (Team Of(Event Player)==Team 1);
+			Create In-World Text
+			(
+				Filtered Array(All Players(All Teams),Event Player.Numz_HealLastTimer > 0),
+				Event Player.Numz_HealReceivedLast,
+				Event Player.Numz_HealTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(Yellow),
+				Default Visibility
+			);
+		else;
+			Create In-World Text
+			(
+				Filtered Array(All Players(All Teams),Event Player.Numz_HealLastTimer > 0),
+				Event Player.Numz_HealReceivedLast,
+				Event Player.Numz_HealTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(Orange),
+				Default Visibility
+			);
+		end;
+	}
+}
+
+rule("Numberz - Heal: Received Event")
+{
+	event
+	{
+		Player Received Healing;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Event Healing > 0;
+	}
+	
+	actions
+	{
+		if (Healer == Host Player);
+			Global.Numz_HealDealtTotal += Event Healing;
+			Global.Numz_HealTotalTimer = 2;
+			Chase Global Variable Over Time(Numz_HealTotalTimer, 0, 2, None);
+		End;
+		if (Event Healing>10);
+			Event Player.Numz_HealReceivedLast=Round To Integer(Event Healing, Down);
+		else;
+			Event Player.Numz_HealReceivedLast=Event Healing;
+		End;
+		Event Player.Numz_HealLastTimer = 1;
+		Chase Player Variable Over Time(Event Player, Numz_HealLastTimer, 0, 1, None);
+		Event Player.Numz_HealTooltipPos = Eye Position(Event Player) + Vector(0.25, 0.5, 0);
+		Chase Player Variable Over Time(Event Player, Numz_HealTooltipPos, Event Player.Numz_HealTooltipPos + Vector(1.25, 1.5, 0), 4, None);
+	}
+}
+
+rule("Numberz - Heal: Timer Run out")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Global.Numz_HealTotalTimer <= 0;
+	}
+
+	actions
+	{
+		Global.Numz_HealDealtTotal = 0;
 	}
 }
 
@@ -644,8 +866,12 @@ rule("Baptiste Button")
 
 	actions
 	{
-		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Position Of(Event Player), Facing Direction Of(Event Player));
+		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 		Global.PlayerEventInfo = Event Player;
+		
+		Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		Small Message(Global.PlayerEventInfo, 1);
 	}
 }
 
@@ -668,8 +894,12 @@ rule("Ana Button")
 
 	actions
 	{
-		Create Dummy Bot(Hero(Ana), Team 1, -1, Position Of(Event Player), Facing Direction Of(Event Player));
+		Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 		Global.PlayerEventInfo = Event Player;
+		
+		Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		Small Message(Global.PlayerEventInfo, 1);
 	}
 }
 
@@ -692,17 +922,20 @@ rule("Mercy Button")
 
 	actions
 	{
-		Skip If(Global.PlayerEventInfo == Event Player, 3);
-		Create Dummy Bot(Hero(Mercy), Team 1, -1, Position Of(Event Player), Direction Towards(Position Of(Event Player), Eye Position(
-			Event Player)));
-		Global.PlayerEventInfo = Event Player;
-		Abort;
-		Destroy Dummy Bot(Team 1, Slot Of(Players On Hero(Hero(Mercy), Team 1)));
-		Global.PlayerEventInfo = Null;
+		if (Global.PlayerEventInfo != Event Player);
+			Create Dummy Bot(Hero(Mercy), Team 1, -1, Vector(84,-3,18), Direction Towards(Position Of(Event Player), Eye Position(Event Player)));
+			Wait(0.25, Ignore Condition);
+			Set Status(Last Created Entity, Null, Phased Out, 9999);
+			Teleport(Last Created Entity, Position Of(Event Player - Vector(1,1,1)));
+			Global.PlayerEventInfo = Event Player;
+		else;
+			Destroy Dummy Bot(Team 1, Slot Of(Players On Hero(Hero(Mercy), Team 1)));
+			Global.PlayerEventInfo = Null;
+		End;
 	}
 }
 
-rule("Orisa Button")
+rule("Kiriko Button")
 {
 	event
 	{
@@ -721,7 +954,12 @@ rule("Orisa Button")
 
 	actions
 	{
-		Create Dummy Bot(Hero(Orisa), Team 1, -1, Position Of(Event Player), Facing Direction Of(Event Player));
+		Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+		
+		Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		Small Message(Global.PlayerEventInfo, 1);
 	}
 }
 
@@ -894,13 +1132,23 @@ rule("Baptiste Amplification Matrix")
 
 	actions
 	{
+		//Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		//Small Message(Global.PlayerEventInfo, 1);
+		Wait(0.5, Ignore Condition);
+		
 		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo), 1000, To World, Direction and Turn Rate);
 		Set Ultimate Charge(Event Player, 100);
-		Wait(1, Ignore Condition);
+		Set Status(Event Player, Null, Phased Out, 5);
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
+		Wait(0.1, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
 		Wait(0.050, Ignore Condition);
 		Press Button(Event Player, Button(Primary Fire));
-		Wait(10.500, Ignore Condition);
+		Wait(0.1, Ignore Condition);
+		Set Status(Event Player, Null, Hacked, 3);
+		Teleport(Event Player, Vector(47,20,40));
+		Wait(10.5-0.1, Ignore Condition);
 		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
 	}
 }
@@ -921,20 +1169,23 @@ rule("Ana Nano Boost")
 
 	actions
 	{
-		Small Message(Global.PlayerEventInfo, 3);
+		//Small Message(Global.PlayerEventInfo, 2);
 		Wait(1, Ignore Condition);
-		Small Message(Global.PlayerEventInfo, 2);
-		Wait(1, Ignore Condition);
-		Small Message(Global.PlayerEventInfo, 1);
-		Wait(1, Ignore Condition);
-		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo)), 5100, To World,
-			Direction and Turn Rate);
+		//Small Message(Global.PlayerEventInfo, 1);
+		Wait(0.5, Ignore Condition);
+		
+		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo)), 5100, To World, Direction and Turn Rate);
 		Wait(0.050, Ignore Condition);
 		Set Ultimate Charge(Event Player, 100);
 		Wait(0.250, Ignore Condition);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
+		Set Status(Event Player, Null, Phased Out, 5);
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo) + Facing Direction Of(Event Player) * 3);
+		Wait(0.25, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
-		Wait(8, Ignore Condition);
+		Wait(0.25, Ignore Condition);
+		Set Status(Event Player, Null, Hacked, 1);
+		Teleport(Event Player, Vector(47,20,40));
+		Wait(8.5-0.25, Ignore Condition);
 		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
 	}
 }
@@ -955,8 +1206,8 @@ rule("Mercy Pocket P1")
 
 	actions
 	{
-		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Position Of(Global.PlayerEventInfo)), 1000, To World,
-			Direction and Turn Rate);
+		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Position Of(Global.PlayerEventInfo)), 1000, To World, Direction and Turn Rate);
+		Set Weapon(Event Player, 1);
 		Start Holding Button(Event Player, Button(Secondary Fire));
 	}
 }
@@ -993,8 +1244,7 @@ rule("Mercy Pocket P3")
 
 	conditions
 	{
-		(Is In Line of Sight(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo), Barriers Do Not Block LOS) == False || Distance Between(
-			Event Player, Position Of(Event Player)) >= 14) == True;
+		(Is In Line of Sight(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo), Barriers Do Not Block LOS) == False || Distance Between(Event Player, Position Of(Event Player)) >= 14) == True;
 		Is Dummy Bot(Event Player) == True;
 	}
 
@@ -1280,7 +1530,6 @@ rule("Roadhog Bot Timer")
 
 	actions
 	{
-		Destroy All In-World Text;
 		Wait(0.016, Ignore Condition);
 		Global.Time = 10;
 		Create In-World Text(All Players(All Teams), Custom String("Time: {0}s", Global.Time), Vector(79.648, 11, -5.662), 3,
@@ -1293,7 +1542,7 @@ rule("Roadhog Bot Timer")
 		Wait(1, Ignore Condition);
 		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Event Player, 100);
 		Wait(1, Ignore Condition);
-		Destroy All In-World Text;
+		Destroy In-World Text(Last Text ID);
 		Set Status(Event Player, Null, Invincible, 3);
 		Set Status(Event Player, Null, Phased Out, 3);
 		Wait(0.016, Ignore Condition);
@@ -1304,7 +1553,7 @@ rule("Roadhog Bot Timer")
 		Wait(0.016, Ignore Condition);
 		Heal(Event Player, Null, 50000);
 		Teleport(Event Player, Vector(79.630, 8.667, -5.675));
-		Destroy All In-World Text;
+		Destroy In-World Text(Last Text ID);
 	}
 }
 
@@ -1328,7 +1577,7 @@ rule("Roadhog Bot Dies?")
 	}
 }
 
-rule("Jump Pad")
+rule("Jump Pad 1")
 {
 	event
 	{
@@ -1340,6 +1589,27 @@ rule("Jump Pad")
 	conditions
 	{
 		Distance Between(Position Of(Event Player), Vector(56.613, -0.574, -7.100)) <= 2;
+		Is Button Held(Event Player, Button(Jump)) == True;
+	}
+
+	actions
+	{
+		Apply Impulse(Event Player, Vector(0, 1, 0), 20, To World, Cancel Contrary Motion);
+	}
+}
+
+rule("Jump Pad 2")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Distance Between(Position Of(Event Player), Vector(79.92, -0.574, 8.42)) <= 2;
 		Is Button Held(Event Player, Button(Jump)) == True;
 	}
 
@@ -1366,7 +1636,8 @@ disabled rule("Teleport")
 
 	actions
 	{
-		Teleport(Event Player, Position Of(Event Player) + Facing Direction Of(Event Player) * 3);
+		Set Facing(Event Player, Vector(0.010, 0.020, 1), To World);
+		Teleport(Event Player, Vector(78.75,-2,16.28));
 	}
 }
 
@@ -1658,7 +1929,7 @@ rule("Friendly Pharah Bot Health")
 	actions
 	{
 		Set Max Health(Event Player, 1000);
-		Set Healing Received(Event Player, 0.010);
+		disabled Set Healing Received(Event Player, 0.010);
 		Wait(0.050, Ignore Condition);
 		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Closest Player To(Vector(61.797, 0.475,
 			28.245), Team 1))), 800, To World, Direction and Turn Rate);
@@ -1773,6 +2044,8 @@ rule("Mercy Bot Movement")
 	{
 		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Players On Hero(Hero(Pharah), Team 2))), 300,
 			To World, Direction and Turn Rate);
+		Set Weapon(Event Player, 1);
+		Wait(0.1,Ignore Condition);
 		Start Holding Button(Event Player, Button(Primary Fire));
 		Start Holding Button(Event Player, Button(Jump));
 		Wait(Random Real(0.500, 1.500), Ignore Condition);
@@ -1803,13 +2076,13 @@ rule("Mercy Bot Dies")
 	}
 }
 
-rule("Friendly Orisa")
+rule("Kiriko's Support")
 {
 	event
 	{
 		Ongoing - Each Player;
 		Team 1;
-		Orisa;
+		Kiriko;
 	}
 
 	conditions
@@ -1819,10 +2092,22 @@ rule("Friendly Orisa")
 
 	actions
 	{
-		Set Ultimate Charge(Event Player, 100);
+		//Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		//Small Message(Global.PlayerEventInfo, 1);
+		Wait(0.5, Ignore Condition);
+		
+		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo), 1000, To World, Direction and Turn Rate);
 		Wait(0.050, Ignore Condition);
+		Set Ultimate Charge(Event Player, 100);
+		Wait(0.250, Ignore Condition);
+		Set Status(Event Player, Null, Phased Out, 5);
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
 		Press Button(Event Player, Button(Ultimate));
-		Wait(15, Ignore Condition);
+		Wait(0.75, Ignore Condition);
+		Set Status(Event Player, Null, Hacked, 1);
+		Teleport(Event Player, Vector(47,20,40));
+		Wait(12-0.75, Ignore Condition);
 		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
 	}
 }
@@ -2197,5 +2482,124 @@ rule("McCree Bot Dies")
 	{
 		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
 		Create Dummy Bot(Hero(Cassidy), Team 2, -1, Vector(36.860, 0.349, -25.874), Vector(0, 0, -0.800));
+	}
+}
+
+disabled rule("Voiceline_Up – Discord")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Up) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Zenyatta), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Voiceline_Left – Nano")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Left) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Voiceline_Right – Matrix")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Right) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Voiceline_Down – Kitsune")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Down) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Ultimate Support")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Crouch)) == True;
+		Is Communicating(Event Player, Need Help) == True;
+	}
+
+	actions
+	{
+		Small Message(Event Player, Custom String("You called for help..."));
+		Event Player.Rnd = Random Integer(0,5);
+		if (Event Player.Rnd==0);
+			Wait(3, Ignore Condition);
+			Small Message(Event Player, Custom String("But nobody came..."));
+		else;
+			Global.PlayerEventInfo = Event Player;
+			Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			Wait(1, Ignore Condition);
+			Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			
+			Wait(2.5, Ignore Condition);
+			Small Message(Event Player, Custom String("Go Hero!"));
+		End;
 	}
 }
