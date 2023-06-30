@@ -113,16 +113,11 @@ variables
 		12: Numz_DamageTotalTimer
 		13: Numz_HealDealtTotal
 		14: Numz_HealTotalTimer
-		17: Rnd
-		19: Time
-		25: BotToggle
 		
 	player:
 		1: Tmp
 		2: Rnd
-		6: AI
-		7: Rnd
-		10: Tmp
+		7: AI
 		11: Numz_DamageTooltipPos
 		12: Numz_DamageReceivedLast
 		13: Numz_DamageLastTimer
