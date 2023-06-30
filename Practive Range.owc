@@ -963,7 +963,7 @@ rule("Ana Nano Boost")
 		Wait(0.25, Ignore Condition);
 		Set Status(Event Player, Null, Hacked, 1);
 		Teleport(Event Player, Vector(47,20,40));
-		Wait(5-0.25, Ignore Condition);
+		Wait(8.5-0.25, Ignore Condition);
 		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
 	}
 }
@@ -2239,5 +2239,124 @@ rule("McCree Bot Dies")
 	{
 		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
 		Create Dummy Bot(Hero(Cassidy), Team 2, -1, Vector(36.860, 0.349, -25.874), Vector(0, 0, -0.800));
+	}
+}
+
+disabled rule("Voiceline_Up – Discord")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Up) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Zenyatta), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Voiceline_Left – Nano")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Left) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Voiceline_Right – Matrix")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Right) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Voiceline_Down – Kitsune")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Down) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Ultimate Support")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Crouch)) == True;
+		Is Communicating(Event Player, Need Help) == True;
+	}
+
+	actions
+	{
+		Small Message(Event Player, Custom String("You called for help..."));
+		Event Player.Rnd = Random Integer(0,5);
+		if (Event Player.Rnd==0);
+			Wait(3, Ignore Condition);
+			Small Message(Event Player, Custom String("But nobody came..."));
+		else;
+			Global.PlayerEventInfo = Event Player;
+			Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			Wait(1, Ignore Condition);
+			Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			
+			Wait(2.5, Ignore Condition);
+			Small Message(Event Player, Custom String("Go Hero!"));
+		End;
 	}
 }
