@@ -9,6 +9,8 @@ settings
 	lobby
 	{
 		Allow Players Who Are In Queue: Yes
+		Max Spectators: 0
+		Max Team 1 Players: 1
 	}
 
 	modes
@@ -111,11 +113,16 @@ variables
 		12: Numz_DamageTotalTimer
 		13: Numz_HealDealtTotal
 		14: Numz_HealTotalTimer
+		17: Rnd
+		19: Time
+		25: BotToggle
 		
 	player:
 		1: Tmp
 		2: Rnd
 		6: AI
+		7: Rnd
+		10: Tmp
 		11: Numz_DamageTooltipPos
 		12: Numz_DamageReceivedLast
 		13: Numz_DamageLastTimer
@@ -204,10 +211,9 @@ rule("Buttons")
 		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(79.734, -1, 22.430), 0.400, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Vector(77.676, -1, 20.970), 0.400, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(56.613, -0.574, -7.100), 1, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Purple), Vector(51.968, -0.233, 11.827), 0.300,
-			Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Sky Blue), Vector(55.217, 8.879, -22.137), 0.300,
-			Visible To Position and Radius);
+		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(79.92, -0.574, 8.42), 1, Visible To Position and Radius);
+		Create Effect(All Players(All Teams), Sphere, Color(Purple), Vector(51.968, -0.233, 11.827), 0.300, Visible To Position and Radius);
+		Create Effect(All Players(All Teams), Sphere, Color(Sky Blue), Vector(55.217, 8.879, -22.137), 0.300, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(85.085, -0.776, 10.119), 0.300, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(77.125, -2.827, 35.112), 0.300, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(White), Vector(85.002, 8.413, -5.243), 0.300, Visible To Position and Radius);
@@ -1156,8 +1162,8 @@ rule("Mercy Pocket P1")
 
 	actions
 	{
-		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Position Of(Global.PlayerEventInfo)), 1000, To World,
-			Direction and Turn Rate);
+		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Position Of(Global.PlayerEventInfo)), 1000, To World, Direction and Turn Rate);
+		Set Weapon(Event Player, 1);
 		Start Holding Button(Event Player, Button(Secondary Fire));
 	}
 }
@@ -1194,8 +1200,7 @@ rule("Mercy Pocket P3")
 
 	conditions
 	{
-		(Is In Line of Sight(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo), Barriers Do Not Block LOS) == False || Distance Between(
-			Event Player, Position Of(Event Player)) >= 14) == True;
+		(Is In Line of Sight(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo), Barriers Do Not Block LOS) == False || Distance Between(Event Player, Position Of(Event Player)) >= 14) == True;
 		Is Dummy Bot(Event Player) == True;
 	}
 
@@ -1528,7 +1533,7 @@ rule("Roadhog Bot Dies?")
 	}
 }
 
-rule("Jump Pad")
+rule("Jump Pad 1")
 {
 	event
 	{
@@ -1540,6 +1545,27 @@ rule("Jump Pad")
 	conditions
 	{
 		Distance Between(Position Of(Event Player), Vector(56.613, -0.574, -7.100)) <= 2;
+		Is Button Held(Event Player, Button(Jump)) == True;
+	}
+
+	actions
+	{
+		Apply Impulse(Event Player, Vector(0, 1, 0), 20, To World, Cancel Contrary Motion);
+	}
+}
+
+rule("Jump Pad 2")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Distance Between(Position Of(Event Player), Vector(79.92, -0.574, 8.42)) <= 2;
 		Is Button Held(Event Player, Button(Jump)) == True;
 	}
 
