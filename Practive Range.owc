@@ -207,7 +207,7 @@ rule("Buttons")
 	actions
 	{
 		Create Effect(All Players(All Teams), Sphere, Color(Yellow), Vector(79.734, 1, 22.430), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Green), Vector(77.676, 1, 20.970), 0.400, Visible To Position and Radius);
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(77.676, 1, 20.970), 0.400, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(79.734, -1, 22.430), 0.400, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Vector(77.676, -1, 20.970), 0.400, Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(56.613, -0.574, -7.100), 1, Visible To Position and Radius);
@@ -851,8 +851,12 @@ rule("Baptiste Button")
 
 	actions
 	{
-		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Position Of(Event Player), Facing Direction Of(Event Player));
+		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 		Global.PlayerEventInfo = Event Player;
+		
+		Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		Small Message(Global.PlayerEventInfo, 1);
 	}
 }
 
@@ -875,8 +879,12 @@ rule("Ana Button")
 
 	actions
 	{
-		Create Dummy Bot(Hero(Ana), Team 1, -1, Position Of(Event Player), Facing Direction Of(Event Player));
+		Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 		Global.PlayerEventInfo = Event Player;
+		
+		Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		Small Message(Global.PlayerEventInfo, 1);
 	}
 }
 
@@ -899,17 +907,20 @@ rule("Mercy Button")
 
 	actions
 	{
-		Skip If(Global.PlayerEventInfo == Event Player, 3);
-		Create Dummy Bot(Hero(Mercy), Team 1, -1, Position Of(Event Player), Direction Towards(Position Of(Event Player), Eye Position(
-			Event Player)));
-		Global.PlayerEventInfo = Event Player;
-		Abort;
-		Destroy Dummy Bot(Team 1, Slot Of(Players On Hero(Hero(Mercy), Team 1)));
-		Global.PlayerEventInfo = Null;
+		if (Global.PlayerEventInfo != Event Player);
+			Create Dummy Bot(Hero(Mercy), Team 1, -1, Vector(84,-3,18), Direction Towards(Position Of(Event Player), Eye Position(Event Player)));
+			Wait(0.25, Ignore Condition);
+			Set Status(Last Created Entity, Null, Phased Out, 9999);
+			Teleport(Last Created Entity, Position Of(Event Player - Vector(1,1,1)));
+			Global.PlayerEventInfo = Event Player;
+		else;
+			Destroy Dummy Bot(Team 1, Slot Of(Players On Hero(Hero(Mercy), Team 1)));
+			Global.PlayerEventInfo = Null;
+		End;
 	}
 }
 
-rule("Orisa Button")
+rule("Kiriko Button")
 {
 	event
 	{
@@ -928,7 +939,12 @@ rule("Orisa Button")
 
 	actions
 	{
-		Create Dummy Bot(Hero(Orisa), Team 1, -1, Position Of(Event Player), Facing Direction Of(Event Player));
+		Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+		
+		Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		Small Message(Global.PlayerEventInfo, 1);
 	}
 }
 
@@ -1101,13 +1117,23 @@ rule("Baptiste Amplification Matrix")
 
 	actions
 	{
+		//Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		//Small Message(Global.PlayerEventInfo, 1);
+		Wait(0.5, Ignore Condition);
+		
 		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo), 1000, To World, Direction and Turn Rate);
 		Set Ultimate Charge(Event Player, 100);
-		Wait(1, Ignore Condition);
+		Set Status(Event Player, Null, Phased Out, 5);
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
+		Wait(0.1, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
 		Wait(0.050, Ignore Condition);
 		Press Button(Event Player, Button(Primary Fire));
-		Wait(10.500, Ignore Condition);
+		Wait(0.1, Ignore Condition);
+		Set Status(Event Player, Null, Hacked, 3);
+		Teleport(Event Player, Vector(47,20,40));
+		Wait(10.5-0.1, Ignore Condition);
 		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
 	}
 }
@@ -1128,20 +1154,23 @@ rule("Ana Nano Boost")
 
 	actions
 	{
-		Small Message(Global.PlayerEventInfo, 3);
+		//Small Message(Global.PlayerEventInfo, 2);
 		Wait(1, Ignore Condition);
-		Small Message(Global.PlayerEventInfo, 2);
-		Wait(1, Ignore Condition);
-		Small Message(Global.PlayerEventInfo, 1);
-		Wait(1, Ignore Condition);
-		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo)), 5100, To World,
-			Direction and Turn Rate);
+		//Small Message(Global.PlayerEventInfo, 1);
+		Wait(0.5, Ignore Condition);
+		
+		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo)), 5100, To World, Direction and Turn Rate);
 		Wait(0.050, Ignore Condition);
 		Set Ultimate Charge(Event Player, 100);
 		Wait(0.250, Ignore Condition);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
+		Set Status(Event Player, Null, Phased Out, 5);
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo) + Facing Direction Of(Event Player) * 3);
+		Wait(0.25, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
-		Wait(8, Ignore Condition);
+		Wait(0.25, Ignore Condition);
+		Set Status(Event Player, Null, Hacked, 1);
+		Teleport(Event Player, Vector(47,20,40));
+		Wait(8.5-0.25, Ignore Condition);
 		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
 	}
 }
@@ -1592,7 +1621,8 @@ disabled rule("Teleport")
 
 	actions
 	{
-		Teleport(Event Player, Position Of(Event Player) + Facing Direction Of(Event Player) * 3);
+		Set Facing(Event Player, Vector(0.010, 0.020, 1), To World);
+		Teleport(Event Player, Vector(78.75,-2,16.28));
 	}
 }
 
@@ -2031,13 +2061,13 @@ rule("Mercy Bot Dies")
 	}
 }
 
-rule("Friendly Orisa")
+rule("Kiriko's Support")
 {
 	event
 	{
 		Ongoing - Each Player;
 		Team 1;
-		Orisa;
+		Kiriko;
 	}
 
 	conditions
@@ -2047,10 +2077,22 @@ rule("Friendly Orisa")
 
 	actions
 	{
-		Set Ultimate Charge(Event Player, 100);
+		//Small Message(Global.PlayerEventInfo, 2);
+		Wait(1, Ignore Condition);
+		//Small Message(Global.PlayerEventInfo, 1);
+		Wait(0.5, Ignore Condition);
+		
+		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo), 1000, To World, Direction and Turn Rate);
 		Wait(0.050, Ignore Condition);
+		Set Ultimate Charge(Event Player, 100);
+		Wait(0.250, Ignore Condition);
+		Set Status(Event Player, Null, Phased Out, 5);
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
 		Press Button(Event Player, Button(Ultimate));
-		Wait(15, Ignore Condition);
+		Wait(0.75, Ignore Condition);
+		Set Status(Event Player, Null, Hacked, 1);
+		Teleport(Event Player, Vector(47,20,40));
+		Wait(12-0.75, Ignore Condition);
 		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
 	}
 }
@@ -2425,5 +2467,124 @@ rule("McCree Bot Dies")
 	{
 		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
 		Create Dummy Bot(Hero(Cassidy), Team 2, -1, Vector(36.860, 0.349, -25.874), Vector(0, 0, -0.800));
+	}
+}
+
+disabled rule("Voiceline_Up – Discord")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Up) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Zenyatta), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Voiceline_Left – Nano")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Left) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Voiceline_Right – Matrix")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Right) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Voiceline_Down – Kitsune")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Voice Line Down) == True;
+	}
+
+	actions
+	{
+		Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+	}
+}
+
+rule("Ultimate Support")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Crouch)) == True;
+		Is Communicating(Event Player, Need Help) == True;
+	}
+
+	actions
+	{
+		Small Message(Event Player, Custom String("You called for help..."));
+		Event Player.Rnd = Random Integer(0,5);
+		if (Event Player.Rnd==0);
+			Wait(3, Ignore Condition);
+			Small Message(Event Player, Custom String("But nobody came..."));
+		else;
+			Global.PlayerEventInfo = Event Player;
+			Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			Wait(1, Ignore Condition);
+			Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			
+			Wait(2.5, Ignore Condition);
+			Small Message(Event Player, Custom String("Go Hero!"));
+		End;
 	}
 }
