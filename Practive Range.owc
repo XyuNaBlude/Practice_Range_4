@@ -102,16 +102,16 @@ variables
 {
 	global:
 		1: PlayerEventInfo
-		2:	Rnd
-		3:	BotToggle
-		5:	Time
+		2: Rnd
+		3: BotToggle
+		5: Time
 		6: MercyButton
 		7: ReaperDirection
 		
 	player:
-		1:	Tmp
-		2:	Rnd
-		6:	AI
+		1: Tmp
+		2: Rnd
+		6: AI
 }
 
 rule("Free Ult [Crouch + Interact]")
