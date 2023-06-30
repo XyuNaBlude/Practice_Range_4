@@ -2142,6 +2142,37 @@ rule("Zayra Charge")
 	}
 }
 
+rule("Doomfist Charger")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Doomfist;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Ability 2)) == True;
+	}
+
+	actions
+	{
+		Skip If(Number Of Players(Team 2) < 5, 2);
+		Destroy Dummy Bot(Team 2, 0);
+		Wait(0.050, Ignore Condition);
+		Create Dummy Bot(Hero(Torbjörn), Team 2, -1, World Vector Of(Forward * 2, Event Player, Rotation And Translation), Eye Position(
+			Event Player));
+		Wait(0.050, Ignore Condition);
+		Set Facing(Players On Hero(Hero(Torbjörn), Team 2), Direction Towards(Eye Position(Players On Hero(Hero(Torbjörn), Team 2)),
+			Eye Position(Event Player)), To World);
+		Wait(0.250, Ignore Condition);
+		Press Button(Players On Hero(Hero(Torbjörn), Team 2), Button(Secondary Fire));
+		Wait(0.250, Ignore Condition);
+		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Torbjörn), Team 2)));
+	}
+}
+
 rule("Genji Abilities")
 {
 	event
