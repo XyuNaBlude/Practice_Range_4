@@ -866,12 +866,13 @@ rule("Baptiste Button")
 
 	actions
 	{
-		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.PlayerEventInfo = Event Player;
-		
 		Small Message(Global.PlayerEventInfo, 2);
 		Wait(1, Ignore Condition);
 		Small Message(Global.PlayerEventInfo, 1);
+		Wait(0.5, Ignore Condition);
+		
+		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
 	}
 }
 
@@ -894,12 +895,14 @@ rule("Ana Button")
 
 	actions
 	{
-		Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.PlayerEventInfo = Event Player;
-		
 		Small Message(Global.PlayerEventInfo, 2);
 		Wait(1, Ignore Condition);
 		Small Message(Global.PlayerEventInfo, 1);
+		Wait(0.5, Ignore Condition);
+		
+		Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
+		
 	}
 }
 
@@ -954,12 +957,13 @@ rule("Kiriko Button")
 
 	actions
 	{
-		Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.PlayerEventInfo = Event Player;
-		
 		Small Message(Global.PlayerEventInfo, 2);
 		Wait(1, Ignore Condition);
 		Small Message(Global.PlayerEventInfo, 1);
+		Wait(0.5, Ignore Condition);
+		
+		Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.PlayerEventInfo = Event Player;
 	}
 }
 
@@ -1132,11 +1136,6 @@ rule("Baptiste Amplification Matrix")
 
 	actions
 	{
-		//Small Message(Global.PlayerEventInfo, 2);
-		Wait(1, Ignore Condition);
-		//Small Message(Global.PlayerEventInfo, 1);
-		Wait(0.5, Ignore Condition);
-		
 		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo), 1000, To World, Direction and Turn Rate);
 		Set Ultimate Charge(Event Player, 100);
 		Set Status(Event Player, Null, Phased Out, 5);
@@ -1170,9 +1169,9 @@ rule("Ana Nano Boost")
 	actions
 	{
 		//Small Message(Global.PlayerEventInfo, 2);
-		Wait(1, Ignore Condition);
+		//Wait(1, Ignore Condition);
 		//Small Message(Global.PlayerEventInfo, 1);
-		Wait(0.5, Ignore Condition);
+		//Wait(0.5, Ignore Condition);
 		
 		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo)), 5100, To World, Direction and Turn Rate);
 		Wait(0.050, Ignore Condition);
@@ -2092,11 +2091,6 @@ rule("Kiriko's Support")
 
 	actions
 	{
-		//Small Message(Global.PlayerEventInfo, 2);
-		Wait(1, Ignore Condition);
-		//Small Message(Global.PlayerEventInfo, 1);
-		Wait(0.5, Ignore Condition);
-		
 		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo), 1000, To World, Direction and Turn Rate);
 		Wait(0.050, Ignore Condition);
 		Set Ultimate Charge(Event Player, 100);
@@ -2592,13 +2586,14 @@ rule("Ultimate Support")
 			Wait(3, Ignore Condition);
 			Small Message(Event Player, Custom String("But nobody came..."));
 		else;
+			Wait(2, Ignore Condition);
 			Global.PlayerEventInfo = Event Player;
 			Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 			Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 			Wait(1, Ignore Condition);
 			Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 			
-			Wait(2.5, Ignore Condition);
+			Wait(1.0, Ignore Condition);
 			Small Message(Event Player, Custom String("Go Hero!"));
 		End;
 	}
