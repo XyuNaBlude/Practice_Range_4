@@ -428,6 +428,37 @@ rule("Configuration – Buttons – Initialization")
 	}
 }
 
+rule("Configuration – ButtonsTrigger – NoCooldowns")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player) == True
+	||	Is Firing Secondary(Event Player) == True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[1]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[1]
+		) <= 0.2;
+	}
+	
+	actions
+	{
+		Big Message(Event Player, Custom String(".!. 'Blizzard Quality Experience' .!."));
+		Small Message(Event Player, Custom String("not gonna work"));
+	}
+}
+
 disabled rule("Hud")
 {
 	event
