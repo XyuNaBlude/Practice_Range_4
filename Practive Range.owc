@@ -221,32 +221,32 @@ rule("Buttons")
 
 	actions
 	{
-		Create Effect(All Players(All Teams), Sphere, Color(Yellow), Vector(79.734, 1, 22.430), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(77.676, 1, 20.970), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(79.734, -1, 22.430), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Vector(77.676, -1, 20.970), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(56.613, -0.574, -7.100), 1, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(79.92, -0.574, 8.42), 1, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Purple), Vector(51.968, -0.233, 11.827), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Sky Blue), Vector(55.217, 8.879, -22.137), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(85.085, -0.776, 10.119), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(77.125, -2.827, 35.112), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(White), Vector(85.002, 8.413, -5.243), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Orange), Vector(36.464, 3.170, 19.845), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Green), Vector(53.486, -1.176, -8.062), 0.300, Visible To Position and Radius);
-		disabled Create Effect(All Players(All Teams), Sphere, Color(White), Vector(40.683, 3.423, 14.280), 6, Visible To Position and Radius);
+		Create Effect(All Players(All Teams), Sphere, Color(Yellow), Vector(79.734, 1, 22.430), 0.400, Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(77.676, 1, 20.970), 0.400, Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(79.734, -1, 22.430), 0.400, Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Vector(77.676, -1, 20.970), 0.400, Visible To);
+		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(56.613, -0.574, -7.100), 1, Visible To);
+		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(79.92, -0.574, 8.42), 1, Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Purple), Vector(51.968, -0.233, 11.827), 0.300, Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Sky Blue), Vector(55.217, 8.879, -22.137), 0.300, Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(85.085, -0.776, 10.119), 0.300, Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(77.125, -2.827, 35.112), 0.300, Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(White), Vector(85.002, 8.413, -5.243), 0.300, Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Orange), Vector(36.464, 3.170, 19.845), 0.300, Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Green), Vector(53.486, -1.176, -8.062), 0.300, Visible To);
+		disabled Create Effect(All Players(All Teams), Sphere, Color(White), Vector(40.683, 3.423, 14.280), 6, Visible To);
 		Create Effect(All Players(All Teams), Sphere, Color(Green), Vector(70.697, -0.826, -21.162), 0.300,
-			Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(75.968, -0.826, -17.423), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(64.112, 8.413, -30.584), 0.300, Visible To Position and Radius);
+			Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(75.968, -0.826, -17.423), 0.300, Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(64.112, 8.413, -30.584), 0.300, Visible To);
 		Create Effect(All Players(All Teams), Sphere, Color(Purple), Vector(76.424, -2.824, 45.714), 0.300,
-			Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Team 1), Vector(46.607, 3.673, 31.369), 0.400, Visible To Position and Radius);
+			Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Team 1), Vector(46.607, 3.673, 31.369), 0.400, Visible To);
 		Create Effect(All Players(All Teams), Sphere, Color(Purple), Vector(60.735, 12.319, 13.829), 0.400,
-			Visible To Position and Radius);
+			Visible To);
 		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Vector(26.988, 1.702, -15.138), 0.400,
-			Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(46.960, 8.525, -12.736), 0.400, Visible To Position and Radius);
+			Visible To);
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(46.960, 8.525, -12.736), 0.400, Visible To);
 	}
 }
 
