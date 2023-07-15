@@ -106,7 +106,6 @@ variables
 		1: PlayerEventInfo
 		2: Rnd
 		3: BotToggle
-		4: ConfigButtsPos
 		5: Time
 		6: MercyButton
 		7: ReaperDirection
@@ -114,6 +113,13 @@ variables
 		12: Numz_DamageTotalTimer
 		13: Numz_HealDealtTotal
 		14: Numz_HealTotalTimer
+		16: ConfigButtsPos
+		17: ConfigButtsEnts
+		21: NoCooldowns
+		22: InfAmmo
+		23: Immortality
+		24: InfUlt
+		25: Numberz_Enable
 		
 	player:
 		1: Tmp
@@ -251,7 +257,7 @@ rule("Buttons")
 	}
 }
 
-rule("Configuration – Buttons – Initialization")
+rule("Configuration – Initialization")
 {
 	event
 	{
@@ -291,6 +297,7 @@ rule("Configuration – Buttons – Initialization")
 		"1st column\n"
 		"No Cooldowns	|#|	Thanks, Blizzard, for making this impossible"
 		Create Effect(All Players(All Teams), Sphere, Color(Gray), Global.ConfigButtsPos[1], 0.2, Visible To);
+		Global.ConfigButtsEnts[1]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[1]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -302,6 +309,7 @@ rule("Configuration – Buttons – Initialization")
 		
 		"Infinite Ammo"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[2], 0.2, Visible To);
+		Global.ConfigButtsEnts[2]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[2]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -313,6 +321,7 @@ rule("Configuration – Buttons – Initialization")
 		
 		"Immortality"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[3], 0.2, Visible To);
+		Global.ConfigButtsEnts[3]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[3]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -324,6 +333,7 @@ rule("Configuration – Buttons – Initialization")
 		
 		"Inf Ultimate Duration"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[4], 0.2, Visible To);
+		Global.ConfigButtsEnts[4]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[4]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -336,7 +346,9 @@ rule("Configuration – Buttons – Initialization")
 		
 		"2nd column\n"
 		"Dmg/Heal Numbers"
+		Global.Numberz_Enable=true;
 		Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[5], 0.2, Visible To);
+		Global.ConfigButtsEnts[5]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[5]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -348,6 +360,7 @@ rule("Configuration – Buttons – Initialization")
 /*
 		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[6], 0.2, Visible To);
+		Global.ConfigButtsEnts[6]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[6]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -359,6 +372,7 @@ rule("Configuration – Buttons – Initialization")
 		
 		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[7], 0.2, Visible To);
+		Global.ConfigButtsEnts[7]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[7]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -370,6 +384,7 @@ rule("Configuration – Buttons – Initialization")
 		
 		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[8], 0.2, Visible To);
+		Global.ConfigButtsEnts[8]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[8]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -383,6 +398,7 @@ rule("Configuration – Buttons – Initialization")
 		"3rd column\n"
 		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[9], 0.2, Visible To);
+		Global.ConfigButtsEnts[9]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[9]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -394,6 +410,7 @@ rule("Configuration – Buttons – Initialization")
 		
 		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[10], 0.2, Visible To);
+		Global.ConfigButtsEnts[10]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[10]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -405,6 +422,7 @@ rule("Configuration – Buttons – Initialization")
 		
 		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[11], 0.2, Visible To);
+		Global.ConfigButtsEnts[11]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[11]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -416,6 +434,7 @@ rule("Configuration – Buttons – Initialization")
 		
 		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[12], 0.2, Visible To);
+		Global.ConfigButtsEnts[12]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[12]+Vector(0,-0.35,0),8,All Teams, Surfaces),
@@ -428,7 +447,7 @@ rule("Configuration – Buttons – Initialization")
 	}
 }
 
-rule("Configuration – ButtonsTrigger – NoCooldowns")
+rule("Configuration – ButtonTrigger – NoCooldowns")
 {
 	event
 	{
@@ -440,8 +459,9 @@ rule("Configuration – ButtonsTrigger – NoCooldowns")
 	conditions
 	{
 		(
-			Is Firing Primary(Event Player) == True
-	||	Is Firing Secondary(Event Player) == True
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
 		)	== True;
 		
 		Distance Between
@@ -450,12 +470,182 @@ rule("Configuration – ButtonsTrigger – NoCooldowns")
 			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[1]),
 			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[1]
 		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[1]) <= 15;
 	}
 	
 	actions
 	{
 		Big Message(Event Player, Custom String(".!. 'Blizzard Quality Experience' .!."));
 		Small Message(Event Player, Custom String("not gonna work"));
+	}
+}
+
+rule("Configuration – ButtonTrigger – InfAmmo")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[2]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[2]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[2]) <= 15;
+	}
+	
+	actions
+	{
+		Global.InfAmmo=!Global.InfAmmo;
+		
+		Destroy Effect(Global.ConfigButtsEnts[2]);
+		if (Global.InfAmmo==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[2], 0.2, Visible To);
+			Global.ConfigButtsEnts[2]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[2], 0.2, Visible To);
+			Global.ConfigButtsEnts[2]=Last Created Entity;
+		End;
+	}
+}
+
+rule("Configuration – ButtonTrigger – Immortality")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[3]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[3]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[3]) <= 15;
+	}
+	
+	actions
+	{
+		Global.Immortality=!Global.Immortality;
+		
+		Destroy Effect(Global.ConfigButtsEnts[3]);
+		if (Global.Immortality==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[3], 0.2, Visible To);
+			Global.ConfigButtsEnts[3]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[3], 0.2, Visible To);
+			Global.ConfigButtsEnts[3]=Last Created Entity;
+		End;
+	}
+}
+
+rule("Configuration – ButtonTrigger – InfUlt")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[4]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[4]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[4]) <= 15;
+	}
+	
+	actions
+	{
+		Global.InfUlt=!Global.InfUlt;
+		
+		Destroy Effect(Global.ConfigButtsEnts[4]);
+		if (Global.InfUlt==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[4], 0.2, Visible To);
+			Global.ConfigButtsEnts[4]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[4], 0.2, Visible To);
+			Global.ConfigButtsEnts[4]=Last Created Entity;
+		End;
+	}
+}
+
+rule("Configuration – ButtonTrigger – Numberz_Enable")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[5]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[5]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[5]) <= 15;
+	}
+	
+	actions
+	{
+		Global.Numberz_Enable=!Global.Numberz_Enable;
+		
+		Destroy Effect(Global.ConfigButtsEnts[5]);
+		if (Global.Numberz_Enable==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[5], 0.2, Visible To);
+			Global.ConfigButtsEnts[5]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[5], 0.2, Visible To);
+			Global.ConfigButtsEnts[5]=Last Created Entity;
+		End;
 	}
 }
 
@@ -534,7 +724,7 @@ rule("Numberz – HUD (Init)")
 	{
 		Create HUD Text
 		(
-			Filtered Array(Event Player, Global.Numz_DamageTotalTimer>0),
+			Filtered Array(Event Player, Global.Numberz_Enable==true && Global.Numz_DamageTotalTimer>0),
 			Round To Integer(Global.Numz_DamageDealtTotal, To Nearest),
 			Null,Null,
 			Top,Null,Color(Red),Null,Null, Visible To and String, Default Visibility
@@ -542,7 +732,7 @@ rule("Numberz – HUD (Init)")
 		
 		Create HUD Text
 		(
-			Filtered Array(Event Player, Global.Numz_HealTotalTimer>0),
+			Filtered Array(Event Player, Global.Numberz_Enable==true && Global.Numz_HealTotalTimer>0),
 			Round To Integer(Global.Numz_HealDealtTotal, To Nearest),
 			Null,Null,
 			Top,Null,Color(Yellow),Null,Null, Visible To and String, Default Visibility
@@ -563,14 +753,14 @@ rule("Numberz - Damage: Init")
 	{		
 		Create In-World Text
 		(
-			Filtered Array(All Players(All Teams), Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == False),
+			Filtered Array(All Players(All Teams), Global.Numberz_Enable==true && Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == False),
 			Event Player.Numz_DamageReceivedLast,
 			Event Player.Numz_DamageTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(White),
 			Default Visibility
 		);
 		Create In-World Text
 		(
-			Filtered Array(All Players(All Teams), Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == True),
+			Filtered Array(All Players(All Teams), Global.Numberz_Enable==true && Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == True),
 			Event Player.Numz_DamageReceivedLast,
 			Event Player.Numz_DamageTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(Red),
 			Default Visibility
