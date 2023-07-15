@@ -106,6 +106,7 @@ variables
 		1: PlayerEventInfo
 		2: Rnd
 		3: BotToggle
+		4: ConfigButtsPos
 		5: Time
 		6: MercyButton
 		7: ReaperDirection
@@ -207,7 +208,7 @@ rule("Tooltips, Avatars")
 			Players Within Radius(Vector(52.43,4.5,27.44),10, All Teams, Surfaces),
 			Custom String("Controls: \n• 'Crouch'+'Interact' – Ult recharge \n• 'Voicelines' to call supports \n· 'Crouch'+'Help!' – ???\n\n~Have Fun!~"),
 			Vector(52.43,4.5,27.44),
-			1, Clip Against Surfaces, Visible To, Color(Lime Green), Default Visibility
+			1, Clip Against Surfaces, Visible To, Color(Orange), Default Visibility
 		);
 	}
 }
@@ -247,6 +248,183 @@ rule("Buttons")
 		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Vector(26.988, 1.702, -15.138), 0.400,
 			Visible To Position and Radius);
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(46.960, 8.525, -12.736), 0.400, Visible To Position and Radius);
+	}
+}
+
+rule("Configuration – Buttons – Initialization")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+	
+	actions
+	{
+		"Buttons Positions"
+		Global.ConfigButtsPos[1]=Vector(58.58,5.80,31.45);
+		Global.ConfigButtsPos[2]=Vector(58.58,5.05,31.45);
+		Global.ConfigButtsPos[3]=Vector(58.58,4.3,31.45);
+		Global.ConfigButtsPos[4]=Vector(58.58,3.55,31.45);
+		Global.ConfigButtsPos[5]=Vector(58.72,5.80,32.31);
+		Global.ConfigButtsPos[6]=Vector(58.72,5.05,32.31);
+		Global.ConfigButtsPos[7]=Vector(58.72,4.3,32.31);
+		Global.ConfigButtsPos[8]=Vector(58.72,3.55,32.31);
+		Global.ConfigButtsPos[9]=Vector(58.88,5.80,33.22);
+		Global.ConfigButtsPos[10]=Vector(58.88,5.05,33.22);
+		Global.ConfigButtsPos[11]=Vector(58.88,4.3,33.22);
+		Global.ConfigButtsPos[12]=Vector(58.88,3.55,33.22);
+		"__________________"
+		
+		Create In-World Text
+		(
+			Players Within Radius(Vector(58.50,6.5,32.37),15,All Teams, Surfaces),
+			Custom String("Configuration Panel"),
+			Vector(58.50,6.5,32.37),
+			1.5, Do Not Clip,	Visible To,
+			Color(Lime Green), Default Visibility
+		);
+		
+		"\n"
+		"#Gaps: Tooltip:-0.35, Sphere:(?,-0.75,?)"
+		"\n\n"
+		
+		"1st column\n"
+		"No Cooldowns	|#|	Thanks, Blizzard, for making this impossible"
+		Create Effect(All Players(All Teams), Sphere, Color(Gray), Global.ConfigButtsPos[1], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[1]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("No Cooldowns"),
+			Global.ConfigButtsPos[1]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(Gray), Default Visibility
+		);
+		
+		"Infinite Ammo"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[2], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[2]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("Infinite Ammo"),
+			Global.ConfigButtsPos[2]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"Immortality"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[3], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[3]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("Immortality"),
+			Global.ConfigButtsPos[3]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"Inf Ultimate Duration"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[4], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[4]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("Inf Ult duration"),
+			Global.ConfigButtsPos[4]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		
+		"2nd column\n"
+		"Dmg/Heal Numbers"
+		Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[5], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[5]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("Dmg/Heal\nNumbers"),
+			Global.ConfigButtsPos[5]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+/*
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[6], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[6]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[6]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[7], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[7]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[7]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[8], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[8]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[8]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		
+		"3rd column\n"
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[9], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[9]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[9]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[10], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[10]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[10]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[11], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[11]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[11]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[12], 0.2, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[12]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[12]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+*/
 	}
 }
 
