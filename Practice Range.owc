@@ -564,6 +564,12 @@ rule("Configuration – ButtonTrigger – Immortality")
 			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[3], 0.2, Visible To);
 			Global.ConfigButtsEnts[3]=Last Created Entity;
 		End;
+		
+		if (Event Player.Immortality==true);
+			Set Status(Event Player, Null, Invincible, 9999);
+		else;
+			Clear Status(Event Player, Invincible);
+		End;
 	}
 }
 
