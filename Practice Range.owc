@@ -651,6 +651,28 @@ rule("Configuration – ButtonTrigger – Numberz_Enable")
 	}
 }
 
+rule("Infinite Ammo")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		Event Player.InfAmmo==true;
+		(Ammo(Event Player,0)<Max Ammo(Event Player,0) || Ammo(Event Player,1)<Max Ammo(Event Player,1))== True;
+	}
+	
+	actions
+	{
+		Set Ammo(Event Player, 0, 1000);
+		Set Ammo(Event Player, 1, 1000);
+	}
+}
+
 disabled rule("Hud")
 {
 	event
