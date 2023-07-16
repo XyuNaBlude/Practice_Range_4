@@ -115,10 +115,6 @@ variables
 		14: Numz_HealTotalTimer
 		16: ConfigButtsPos
 		17: ConfigButtsEnts
-		21: NoCooldowns
-		22: InfAmmo
-		23: Immortality
-		24: InfUlt
 		25: Numberz_Enable
 		
 	player:
@@ -132,6 +128,10 @@ variables
 		15: Numz_HealReceivedLast
 		16: Numz_HealTooltipPos
 		17: Numz_HealLastTimer
+		21: NoCooldowns
+		22: InfAmmo
+		23: Immortality
+		24: InfUlt
 }
 
 rule("Free Ult [Crouch + Interact]")
@@ -510,15 +510,17 @@ rule("Configuration – ButtonTrigger – InfAmmo")
 	
 	actions
 	{
-		Global.InfAmmo=!Global.InfAmmo;
+		Event Player.InfAmmo=!Event Player.InfAmmo;
 		
 		Destroy Effect(Global.ConfigButtsEnts[2]);
-		if (Global.InfAmmo==true);
+		if (Event Player.InfAmmo==true);
 			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[2], 0.2, Visible To);
 			Global.ConfigButtsEnts[2]=Last Created Entity;
 		else;
 			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[2], 0.2, Visible To);
 			Global.ConfigButtsEnts[2]=Last Created Entity;
+			Set Ammo(Event Player, 0, Max Ammo(Event Player,0));
+			Set Ammo(Event Player, 1, Max Ammo(Event Player,1));
 		End;
 	}
 }
@@ -552,10 +554,10 @@ rule("Configuration – ButtonTrigger – Immortality")
 	
 	actions
 	{
-		Global.Immortality=!Global.Immortality;
+		Event Player.Immortality=!Event Player.Immortality;
 		
 		Destroy Effect(Global.ConfigButtsEnts[3]);
-		if (Global.Immortality==true);
+		if (Event Player.Immortality==true);
 			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[3], 0.2, Visible To);
 			Global.ConfigButtsEnts[3]=Last Created Entity;
 		else;
@@ -594,10 +596,10 @@ rule("Configuration – ButtonTrigger – InfUlt")
 	
 	actions
 	{
-		Global.InfUlt=!Global.InfUlt;
+		Event Player.InfUlt=!Event Player.InfUlt;
 		
 		Destroy Effect(Global.ConfigButtsEnts[4]);
-		if (Global.InfUlt==true);
+		if (Event Player.InfUlt==true);
 			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[4], 0.2, Visible To);
 			Global.ConfigButtsEnts[4]=Last Created Entity;
 		else;
