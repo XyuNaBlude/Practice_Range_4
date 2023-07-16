@@ -345,14 +345,13 @@ rule("Configuration – Initialization")
 		
 		
 		"2nd column\n"
-		"Dmg/Heal Numbers"
-		Global.Numberz_Enable=true;
-		Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[5], 0.2, Visible To);
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[5], 0.2, Visible To);
 		Global.ConfigButtsEnts[5]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[5]+Vector(0,-0.35,0),8,All Teams, Surfaces),
-			Custom String("Dmg/Heal\nNumbers"),
+			Custom String("placeHolder"),
 			Global.ConfigButtsPos[5]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
@@ -393,21 +392,22 @@ rule("Configuration – Initialization")
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-		
+*/		
 		
 		"3rd column\n"
-		"PlaceHolder"
-		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[9], 0.2, Visible To);
+		"Dmg/Heal Numbers"
+		Global.Numberz_Enable=true;
+		Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[9], 0.2, Visible To);
 		Global.ConfigButtsEnts[9]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[9]+Vector(0,-0.35,0),8,All Teams, Surfaces),
-			Custom String("placeholder"),
+			Custom String("Dmg/Heal\nNumbers"),
 			Global.ConfigButtsPos[9]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-		
+/*		
 		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[10], 0.2, Visible To);
 		Global.ConfigButtsEnts[10]=Last Created Entity;
@@ -635,24 +635,24 @@ rule("Configuration – ButtonTrigger – Numberz_Enable")
 		Distance Between
 		(
 			Ray Cast Hit Position(Eye Position(Event Player),
-			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[5]),
-			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[5]
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[9]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[9]
 		) <= 0.2;
 		
-		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[5]) <= 15;
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[9]) <= 15;
 	}
 	
 	actions
 	{
 		Global.Numberz_Enable=!Global.Numberz_Enable;
 		
-		Destroy Effect(Global.ConfigButtsEnts[5]);
+		Destroy Effect(Global.ConfigButtsEnts[9]);
 		if (Global.Numberz_Enable==true);
-			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[5], 0.2, Visible To);
-			Global.ConfigButtsEnts[5]=Last Created Entity;
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[9], 0.2, Visible To);
+			Global.ConfigButtsEnts[9]=Last Created Entity;
 		else;
-			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[5], 0.2, Visible To);
-			Global.ConfigButtsEnts[5]=Last Created Entity;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[9], 0.2, Visible To);
+			Global.ConfigButtsEnts[9]=Last Created Entity;
 		End;
 	}
 }
