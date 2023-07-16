@@ -337,7 +337,7 @@ rule("Configuration – Initialization")
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[4]+Vector(0,-0.35,0),8,All Teams, Surfaces),
-			Custom String("Inf Ult duration"),
+			Custom String("Inf Ult duration*"),
 			Global.ConfigButtsPos[4]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
@@ -657,28 +657,6 @@ rule("Configuration – ButtonTrigger – Numberz_Enable")
 	}
 }
 
-rule("Infinite Ammo")
-{
-	event
-	{
-		Ongoing - Each Player;
-		Team 1;
-		All;
-	}
-	
-	conditions
-	{
-		Event Player.InfAmmo==true;
-		(Ammo(Event Player,0)<Max Ammo(Event Player,0) || Ammo(Event Player,1)<Max Ammo(Event Player,1))== True;
-	}
-	
-	actions
-	{
-		Set Ammo(Event Player, 0, 1000);
-		Set Ammo(Event Player, 1, 1000);
-	}
-}
-
 disabled rule("Hud")
 {
 	event
@@ -928,6 +906,60 @@ rule("Numberz - Heal: Timer Run out")
 	actions
 	{
 		Global.Numz_HealDealtTotal = 0;
+	}
+}
+
+rule("Infinite Ammo")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		Event Player.InfAmmo==true;
+		(Ammo(Event Player,0)<Max Ammo(Event Player,0) || Ammo(Event Player,1)<Max Ammo(Event Player,1))== True;
+	}
+	
+	actions
+	{
+		Set Ammo(Event Player, 0, 1000);
+		Set Ammo(Event Player, 1, 1000);
+	}
+}
+
+rule("Infinite Ultimate Duration (Lie)")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Event Player.InfUlt==true;
+		Is Button Held(Event Player, Button(Ultimate)) == True;
+		Array Contains
+		(
+			Array(Hero(Ramattra), Hero(Roadhog), Hero(Winston), Hero(Ashe), Hero(Genji), Hero(Mei), Hero(Sojourn), Hero(Soldier: 76),
+						Hero(Widowmaker), Hero(Brigitte), Hero(Kiriko), Hero(Lúcio), Hero(Mercy), Hero(Moira), Hero(Zenyatta)),
+			Hero Of(Event Player)
+		) == true;
+	}
+
+	actions
+	{
+		while (Event Player.InfUlt==true);
+			Set Ultimate Charge(Event Player, 100);
+			Wait(0.016, Ignore Condition);
+			Press Button(Event Player, Button(Ultimate));
+			Wait Until(Is Using Ultimate(Event Player) == False, 99999);
+		End;
 	}
 }
 
