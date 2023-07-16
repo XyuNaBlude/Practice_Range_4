@@ -130,7 +130,7 @@ variables
 		17: Numz_HealLastTimer
 		21: NoCooldowns
 		22: InfAmmo
-		23: Immortality
+		23: Invincibility
 		24: InfUlt
 }
 
@@ -319,13 +319,13 @@ rule("Configuration – Initialization")
 			Color(White), Default Visibility
 		);
 		
-		"Immortality"
+		"Invincibility"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[3], 0.2, Visible To);
 		Global.ConfigButtsEnts[3]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[3]+Vector(0,-0.35,0),8,All Teams, Surfaces),
-			Custom String("Immortality"),
+			Custom String("Invincibility"),
 			Global.ConfigButtsPos[3]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
@@ -525,7 +525,7 @@ rule("Configuration – ButtonTrigger – InfAmmo")
 	}
 }
 
-rule("Configuration – ButtonTrigger – Immortality")
+rule("Configuration – ButtonTrigger – Invincibility")
 {
 	event
 	{
@@ -554,10 +554,10 @@ rule("Configuration – ButtonTrigger – Immortality")
 	
 	actions
 	{
-		Event Player.Immortality=!Event Player.Immortality;
+		Event Player.Invincibility=!Event Player.Invincibility;
 		
 		Destroy Effect(Global.ConfigButtsEnts[3]);
-		if (Event Player.Immortality==true);
+		if (Event Player.Invincibility==true);
 			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[3], 0.2, Visible To);
 			Global.ConfigButtsEnts[3]=Last Created Entity;
 		else;
@@ -565,7 +565,7 @@ rule("Configuration – ButtonTrigger – Immortality")
 			Global.ConfigButtsEnts[3]=Last Created Entity;
 		End;
 		
-		if (Event Player.Immortality==true);
+		if (Event Player.Invincibility==true);
 			Set Status(Event Player, Null, Invincible, 9999);
 		else;
 			Clear Status(Event Player, Invincible);
