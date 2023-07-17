@@ -132,6 +132,8 @@ variables
 		22: InfAmmo
 		23: Invincibility
 		24: InfUlt
+		25: HealthRegen
+		26: HealthRegen_Timer
 }
 
 rule("Free Ult [Crouch + Interact]")
@@ -345,13 +347,13 @@ rule("Configuration – Initialization")
 		
 		
 		"2nd column\n"
-		"PlaceHolder"
+		"HealthRegen"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[5], 0.2, Visible To);
 		Global.ConfigButtsEnts[5]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[5]+Vector(0,-0.35,0),8,All Teams, Surfaces),
-			Custom String("placeHolder"),
+			Custom String("Health Regen"),
 			Global.ConfigButtsPos[5]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
@@ -611,6 +613,48 @@ rule("Configuration – ButtonTrigger – InfUlt")
 		else;
 			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[4], 0.2, Visible To);
 			Global.ConfigButtsEnts[4]=Last Created Entity;
+		End;
+	}
+}
+
+rule("Configuration – ButtonTrigger – HealthRegen")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[5]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[5]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[5]) <= 15;
+	}
+	
+	actions
+	{
+		Event Player.HealthRegen=!Event Player.HealthRegen;
+		
+		Destroy Effect(Global.ConfigButtsEnts[5]);
+		if (Event Player.HealthRegen==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[5], 0.2, Visible To);
+			Global.ConfigButtsEnts[5]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[5], 0.2, Visible To);
+			Global.ConfigButtsEnts[5]=Last Created Entity;
 		End;
 	}
 }
@@ -960,6 +1004,52 @@ rule("Infinite Ultimate Duration (Lie)")
 			Press Button(Event Player, Button(Ultimate));
 			Wait Until(Is Using Ultimate(Event Player) == False, 99999);
 		End;
+	}
+}
+
+rule("HealthRegen – Timer-Restart")
+{
+	event
+	{
+		Player Took Damage;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		Event Player.HealthRegen==true;
+	}
+	
+	actions
+	{
+		Event Player.HealthRegen_Timer=3;
+		Chase Player Variable Over Time(Event Player, HealthRegen_Timer, 0, 3, None);
+	}
+}
+
+rule("HealthRegen")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		Event Player.HealthRegen==true;
+		Health(Event Player)<Max Health(Event Player);
+		Event Player.HealthRegen_Timer<=0;
+		Is Alive(Event Player)==True;
+	}
+	
+	actions
+	{
+		Heal(Event Player, Null, 50 /10);	//"20" is HP/s
+		Wait(0.100, Ignore Condition);
+		Loop If Condition Is True;
 	}
 }
 
@@ -1564,7 +1654,6 @@ rule("Sombra Button")
 
 	actions
 	{
-		Heal(Event Player, Null, 1000);
 		Skip If(Global.BotToggle[11] == 1, 8);
 		Skip If(Number Of Players(Team 2) < 5, 2);
 		Wait(0.050, Ignore Condition);
