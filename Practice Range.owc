@@ -107,12 +107,16 @@ variables
 		2: Rnd
 		3: BotToggle
 		5: Time
-		6: MercyButton
-		7: ReaperDirection
+		6: Buttons
+		7: MercyButton
+		8: ReaperDirection
 		11: Numz_DamageDealtTotal
 		12: Numz_DamageTotalTimer
 		13: Numz_HealDealtTotal
 		14: Numz_HealTotalTimer
+		16: ConfigButtsPos
+		17: ConfigButtsEnts
+		25: Numberz_Enable
 		
 	player:
 		1: Tmp
@@ -125,6 +129,12 @@ variables
 		15: Numz_HealReceivedLast
 		16: Numz_HealTooltipPos
 		17: Numz_HealLastTimer
+		21: NoCooldowns
+		22: InfAmmo
+		23: Invincibility
+		24: InfUlt
+		25: HealthRegen
+		26: HealthRegen_Timer
 }
 
 rule("Free Ult [Crouch + Interact]")
@@ -207,12 +217,12 @@ rule("Tooltips, Avatars")
 			Players Within Radius(Vector(52.43,4.5,27.44),10, All Teams, Surfaces),
 			Custom String("Controls: \n• 'Crouch'+'Interact' – Ult recharge \n• 'Voicelines' to call supports \n· 'Crouch'+'Help!' – ???\n\n~Have Fun!~"),
 			Vector(52.43,4.5,27.44),
-			1, Clip Against Surfaces, Visible To, Color(Lime Green), Default Visibility
+			1, Clip Against Surfaces, Visible To, Color(Orange), Default Visibility
 		);
 	}
 }
 
-rule("Buttons")
+rule("Buttons, Tooltips")
 {
 	event
 	{
@@ -221,32 +231,641 @@ rule("Buttons")
 
 	actions
 	{
-		Create Effect(All Players(All Teams), Sphere, Color(Yellow), Vector(79.734, 1, 22.430), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(77.676, 1, 20.970), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(79.734, -1, 22.430), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Vector(77.676, -1, 20.970), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(56.613, -0.574, -7.100), 1, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Ring, Color(Green), Vector(79.92, -0.574, 8.42), 1, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Purple), Vector(51.968, -0.233, 11.827), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Sky Blue), Vector(55.217, 8.879, -22.137), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(85.085, -0.776, 10.119), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(77.125, -2.827, 35.112), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(White), Vector(85.002, 8.413, -5.243), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Orange), Vector(36.464, 3.170, 19.845), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Green), Vector(53.486, -1.176, -8.062), 0.300, Visible To Position and Radius);
-		disabled Create Effect(All Players(All Teams), Sphere, Color(White), Vector(40.683, 3.423, 14.280), 6, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Green), Vector(70.697, -0.826, -21.162), 0.300,
-			Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(75.968, -0.826, -17.423), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Blue), Vector(64.112, 8.413, -30.584), 0.300, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Purple), Vector(76.424, -2.824, 45.714), 0.300,
-			Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Team 1), Vector(46.607, 3.673, 31.369), 0.400, Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Purple), Vector(60.735, 12.319, 13.829), 0.400,
-			Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Vector(26.988, 1.702, -15.138), 0.400,
-			Visible To Position and Radius);
-		Create Effect(All Players(All Teams), Sphere, Color(Red), Vector(46.960, 8.525, -12.736), 0.400, Visible To Position and Radius);
+		"Mercy Button"
+		Global.Buttons[1]=Vector(79.734,1,22.430);
+		Create Effect(All Players(All Teams), Sphere, Color(Yellow), Global.Buttons[1], 0.4, Visible To Position and Radius);
+		Create In-World Text
+		(
+			Players Within Radius(Vector(78.7,-0.25,21.7),12,All Teams, Surfaces),
+			Ability Icon String(Hero(Mercy), Button(Secondary Fire)),
+			Global.Buttons[1]+Vector(0,-0.15,0), 1.5, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Kiriko Button"
+		Global.Buttons[2]=Vector(77.676,1,20.970);
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.Buttons[2], 0.4, Visible To Position and Radius);
+		Create In-World Text
+		(
+			Players Within Radius(Vector(78.7,-0.25,21.7),12,All Teams, Surfaces),
+			Ability Icon String(Hero(Kiriko), Button(Ultimate)),
+			Global.Buttons[2]+Vector(0,-0.2,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+
+		"Ana Button"
+		Global.Buttons[3]=Vector(79.734,-1,22.430);
+		Create Effect(All Players(All Teams), Sphere, Color(Blue), Global.Buttons[3], 0.4, Visible To Position and Radius);
+		Create In-World Text
+		(
+			Players Within Radius(Vector(78.7,-0.25,21.7),12,All Teams, Surfaces),
+			Ability Icon String(Hero(Ana), Button(Ultimate)),
+			Global.Buttons[3]+Vector(0,-0.2,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+
+		"Baptiste Button"
+		Global.Buttons[4]=Vector(77.676,-1,20.970);
+		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Global.Buttons[4], 0.4, Visible To Position and Radius);
+		Create In-World Text
+		(
+			Players Within Radius(Vector(78.7,-0.25,21.7),12,All Teams, Surfaces),
+			Ability Icon String(Hero(Baptiste), Button(Ultimate)),
+			Global.Buttons[4]+Vector(0,-0.2,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Jump pad 1"
+		Global.Buttons[5]=Vector(56.613,-0.574,-7.100);
+		Create Effect(All Players(All Teams), Ring, Color(Green), Global.Buttons[5], 1, Visible To);
+		"Jump pad 2"
+		Global.Buttons[6]=Vector(79.92,-0.574,8.42);
+		Create Effect(All Players(All Teams), Ring, Color(Green), Global.Buttons[6], 1, Visible To);
+		
+		"Widow Button"
+		Global.Buttons[7]=Vector(51.968,-0.233,11.827);
+		Create Effect(All Players(All Teams), Sphere, Color(Purple), Global.Buttons[7], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[7],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Widowmaker)),
+			Global.Buttons[7]+Vector(0,-0.1,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Symmetra Button"
+		Global.Buttons[8]=Vector(55.217,8.879,-22.137);
+		Create Effect(All Players(All Teams), Sphere, Color(Sky Blue), Global.Buttons[8], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[8],5,All Teams, Surfaces),
+			Ability Icon String(Hero(Symmetra), Button(Ability 1)),
+			Global.Buttons[8]+Vector(0,-0.1,0), 3, Do Not Clip, Visible To, Color(Gray), Default Visibility
+		);
+
+		"Pharah Button"
+		Global.Buttons[9]=Vector(85.085,-0.776,10.119);
+		Create Effect(All Players(All Teams), Sphere, Color(Blue), Global.Buttons[9], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[9],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Pharah)),
+			Global.Buttons[9]+Vector(0,-0.1,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Reaper Button"
+		Global.Buttons[10]=Vector(77.125,-2.827,35.112);
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.Buttons[10], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[10],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Reaper)),
+			Global.Buttons[10]+Vector(0,-0.1,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Roadhog Button"
+		Global.Buttons[11]=Vector(85.002,8.413,-5.243);
+		Create Effect(All Players(All Teams), Sphere, Color(White), Global.Buttons[11], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[11],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Roadhog)),
+			Global.Buttons[11]+Vector(0,-0.1,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Tracer Button"
+		Global.Buttons[12]=Vector(36.464,3.17,19.845);
+		Create Effect(All Players(All Teams), Sphere, Color(Orange), Global.Buttons[12], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[12],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Tracer)),
+			Global.Buttons[12]+Vector(0,-0.1,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Lucio Button"
+		Global.Buttons[13]=Vector(53.486,-1.176,-8.062);
+		Create Effect(All Players(All Teams), Sphere, Color(Green), Global.Buttons[13], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[13],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Lúcio)),
+			Global.Buttons[13]+Vector(0,-0.1,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+
+		"."
+		disabled Create Effect(All Players(All Teams), Sphere, Color(White), Vector(40.683, 3.423, 14.280), 6, Visible To);
+		
+		"Genji Button"
+		Global.Buttons[14]=Vector(70.697,-0.826,-21.162);
+		Create Effect(All Players(All Teams), Sphere, Color(Green), Global.Buttons[14], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[14],5,All Teams, Surfaces),
+			Custom String("{0}{1}", Hero Icon String(Hero(Genji)), Ability Icon String(Hero(Genji), Button(Ability 2))),
+			Global.Buttons[14]+Vector(0,-0.05,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Mei Button"
+		Global.Buttons[15]=Vector(75.968,-0.826,-17.423);
+		Create Effect(All Players(All Teams), Sphere, Color(Blue), Global.Buttons[15], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[15],5,All Teams, Surfaces),
+			Custom String("{0}{1}", Hero Icon String(Hero(Mei)), Ability Icon String(Hero(Mei), Button(Ability 1))),
+			Global.Buttons[15]+Vector(0,-0.05,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Reinhardt Button"
+		Global.Buttons[16]=Vector(64.112,8.413,-30.584);
+		Create Effect(All Players(All Teams), Sphere, Color(Blue), Global.Buttons[16], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[16],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Reinhardt)),
+			Global.Buttons[16]+Vector(0,-0.05,0), 2.5, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Sombra Button"
+		Global.Buttons[17]=Vector(76.424,-2.824,45.714);
+		Create Effect(All Players(All Teams), Sphere, Color(Purple), Global.Buttons[17], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[17],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Sombra)),
+			Global.Buttons[17]+Vector(0,-0.05,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Destroy All Bots - Button"
+		Global.Buttons[18]=Vector(46.607,3.673,31.369);
+		Create Effect(All Players(All Teams), Sphere, Color(Team 1), Global.Buttons[18], 0.4, Visible To);
+		
+		"DVa Button"
+		Global.Buttons[19]=Vector(60.735,12.319,13.829);
+		Create Effect(All Players(All Teams), Sphere, Color(Purple), Global.Buttons[19], 0.4, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[19],5,All Teams, Surfaces),
+			Hero Icon String(Hero(D.Va)),
+			Global.Buttons[19]+Vector(0,-0.05,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Zarya Button"
+		Global.Buttons[20]=Vector(26.988,1.702,-15.138);
+		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Global.Buttons[20], 0.4, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[20],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Zarya)),
+			Global.Buttons[20]+Vector(0,-0.05,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"McCree Button"
+		Global.Buttons[21]=Vector(46.960,8.525,-12.736);
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.Buttons[21], 0.4, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[21],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Cassidy)),
+			Global.Buttons[21]+Vector(0,-0.05,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+	}
+}
+
+rule("Configuration – Initialization")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+	
+	actions
+	{
+		"Buttons Positions"
+		Global.ConfigButtsPos[1]=Vector(58.58,5.80,31.45);
+		Global.ConfigButtsPos[2]=Vector(58.58,5.05,31.45);
+		Global.ConfigButtsPos[3]=Vector(58.58,4.3,31.45);
+		Global.ConfigButtsPos[4]=Vector(58.58,3.55,31.45);
+		Global.ConfigButtsPos[5]=Vector(58.72,5.80,32.31);
+		Global.ConfigButtsPos[6]=Vector(58.72,5.05,32.31);
+		Global.ConfigButtsPos[7]=Vector(58.72,4.3,32.31);
+		Global.ConfigButtsPos[8]=Vector(58.72,3.55,32.31);
+		Global.ConfigButtsPos[9]=Vector(58.88,5.80,33.22);
+		Global.ConfigButtsPos[10]=Vector(58.88,5.05,33.22);
+		Global.ConfigButtsPos[11]=Vector(58.88,4.3,33.22);
+		Global.ConfigButtsPos[12]=Vector(58.88,3.55,33.22);
+		"__________________"
+		
+		Create In-World Text
+		(
+			Players Within Radius(Vector(58.50,6.5,32.37),15,All Teams, Surfaces),
+			Custom String("Configuration Panel"),
+			Vector(58.50,6.5,32.37),
+			1.5, Do Not Clip,	Visible To,
+			Color(Lime Green), Default Visibility
+		);
+		
+		"\n"
+		"#Gaps: Tooltip:-0.35, Sphere:(?,-0.75,?)"
+		"\n\n"
+		
+		"1st column\n"
+		"No Cooldowns	|#|	Thanks, Blizzard, for making this impossible"
+		Create Effect(All Players(All Teams), Sphere, Color(Gray), Global.ConfigButtsPos[1], 0.2, Visible To);
+		Global.ConfigButtsEnts[1]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[1]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("No Cooldowns"),
+			Global.ConfigButtsPos[1]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(Gray), Default Visibility
+		);
+		
+		"Infinite Ammo"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[2], 0.2, Visible To);
+		Global.ConfigButtsEnts[2]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[2]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("Infinite Ammo"),
+			Global.ConfigButtsPos[2]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"Invincibility"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[3], 0.2, Visible To);
+		Global.ConfigButtsEnts[3]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[3]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("Invincibility"),
+			Global.ConfigButtsPos[3]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"Inf Ultimate Duration"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[4], 0.2, Visible To);
+		Global.ConfigButtsEnts[4]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[4]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("Inf Ult duration*"),
+			Global.ConfigButtsPos[4]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		
+		"2nd column\n"
+		"HealthRegen"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[5], 0.2, Visible To);
+		Global.ConfigButtsEnts[5]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[5]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("Health Regen"),
+			Global.ConfigButtsPos[5]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+/*
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[6], 0.2, Visible To);
+		Global.ConfigButtsEnts[6]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[6]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[6]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[7], 0.2, Visible To);
+		Global.ConfigButtsEnts[7]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[7]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[7]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[8], 0.2, Visible To);
+		Global.ConfigButtsEnts[8]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[8]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[8]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+*/		
+		
+		"3rd column\n"
+		"Dmg/Heal Numbers"
+		Global.Numberz_Enable=true;
+		Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[9], 0.2, Visible To);
+		Global.ConfigButtsEnts[9]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[9]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("Dmg/Heal\nNumbers"),
+			Global.ConfigButtsPos[9]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+/*		
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[10], 0.2, Visible To);
+		Global.ConfigButtsEnts[10]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[10]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[10]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[11], 0.2, Visible To);
+		Global.ConfigButtsEnts[11]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[11]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[11]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+		
+		"PlaceHolder"
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[12], 0.2, Visible To);
+		Global.ConfigButtsEnts[12]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.ConfigButtsPos[12]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Custom String("placeholder"),
+			Global.ConfigButtsPos[12]+Vector(0,-0.35,0),
+			1, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
+		);
+*/
+	}
+}
+
+rule("Configuration – ButtonTrigger – NoCooldowns")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[1]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[1]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[1]) <= 15;
+	}
+	
+	actions
+	{
+		Big Message(Event Player, Custom String(".!. 'Blizzard Quality Experience' .!."));
+		Small Message(Event Player, Custom String("not gonna work"));
+	}
+}
+
+rule("Configuration – ButtonTrigger – InfAmmo")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[2]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[2]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[2]) <= 15;
+	}
+	
+	actions
+	{
+		Event Player.InfAmmo=!Event Player.InfAmmo;
+		
+		Destroy Effect(Global.ConfigButtsEnts[2]);
+		if (Event Player.InfAmmo==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[2], 0.2, Visible To);
+			Global.ConfigButtsEnts[2]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[2], 0.2, Visible To);
+			Global.ConfigButtsEnts[2]=Last Created Entity;
+			Set Ammo(Event Player, 0, Max Ammo(Event Player,0));
+			Set Ammo(Event Player, 1, Max Ammo(Event Player,1));
+		End;
+	}
+}
+
+rule("Configuration – ButtonTrigger – Invincibility")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[3]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[3]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[3]) <= 15;
+	}
+	
+	actions
+	{
+		Event Player.Invincibility=!Event Player.Invincibility;
+		
+		Destroy Effect(Global.ConfigButtsEnts[3]);
+		if (Event Player.Invincibility==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[3], 0.2, Visible To);
+			Global.ConfigButtsEnts[3]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[3], 0.2, Visible To);
+			Global.ConfigButtsEnts[3]=Last Created Entity;
+		End;
+		
+		if (Event Player.Invincibility==true);
+			Set Status(Event Player, Null, Invincible, 9999);
+		else;
+			Clear Status(Event Player, Invincible);
+		End;
+	}
+}
+
+rule("Configuration – ButtonTrigger – InfUlt")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[4]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[4]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[4]) <= 15;
+	}
+	
+	actions
+	{
+		Event Player.InfUlt=!Event Player.InfUlt;
+		
+		Destroy Effect(Global.ConfigButtsEnts[4]);
+		if (Event Player.InfUlt==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[4], 0.2, Visible To);
+			Global.ConfigButtsEnts[4]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[4], 0.2, Visible To);
+			Global.ConfigButtsEnts[4]=Last Created Entity;
+		End;
+	}
+}
+
+rule("Configuration – ButtonTrigger – HealthRegen")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[5]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[5]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[5]) <= 15;
+	}
+	
+	actions
+	{
+		Event Player.HealthRegen=!Event Player.HealthRegen;
+		
+		Destroy Effect(Global.ConfigButtsEnts[5]);
+		if (Event Player.HealthRegen==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[5], 0.2, Visible To);
+			Global.ConfigButtsEnts[5]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[5], 0.2, Visible To);
+			Global.ConfigButtsEnts[5]=Last Created Entity;
+		End;
+	}
+}
+
+rule("Configuration – ButtonTrigger – Numberz_Enable")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[9]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[9]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[9]) <= 15;
+	}
+	
+	actions
+	{
+		Global.Numberz_Enable=!Global.Numberz_Enable;
+		
+		Destroy Effect(Global.ConfigButtsEnts[9]);
+		if (Global.Numberz_Enable==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[9], 0.2, Visible To);
+			Global.ConfigButtsEnts[9]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[9], 0.2, Visible To);
+			Global.ConfigButtsEnts[9]=Last Created Entity;
+		End;
 	}
 }
 
@@ -280,16 +899,16 @@ rule("Destroy All Bots")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(46.607, 3.673, 31.369)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[18]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
 	actions
 	{
 		Destroy All Dummy Bots;
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(46.607, 3.673, 31.369), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Team 1), Vector(46.607, 3.673, 31.369), 1);
-		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(76.424, -2.824, 45.714), 100);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[18], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Team 1), Global.Buttons[18], 1);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[18], 100);
 		Destroy All Dummy Bots;
 	}
 }
@@ -325,7 +944,7 @@ rule("Numberz – HUD (Init)")
 	{
 		Create HUD Text
 		(
-			Filtered Array(Event Player, Global.Numz_DamageTotalTimer>0),
+			Filtered Array(Event Player, Global.Numberz_Enable==true && Global.Numz_DamageTotalTimer>0),
 			Round To Integer(Global.Numz_DamageDealtTotal, To Nearest),
 			Null,Null,
 			Top,Null,Color(Red),Null,Null, Visible To and String, Default Visibility
@@ -333,7 +952,7 @@ rule("Numberz – HUD (Init)")
 		
 		Create HUD Text
 		(
-			Filtered Array(Event Player, Global.Numz_HealTotalTimer>0),
+			Filtered Array(Event Player, Global.Numberz_Enable==true && Global.Numz_HealTotalTimer>0),
 			Round To Integer(Global.Numz_HealDealtTotal, To Nearest),
 			Null,Null,
 			Top,Null,Color(Yellow),Null,Null, Visible To and String, Default Visibility
@@ -354,14 +973,14 @@ rule("Numberz - Damage: Init")
 	{		
 		Create In-World Text
 		(
-			Filtered Array(All Players(All Teams), Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == False),
+			Filtered Array(All Players(All Teams), Global.Numberz_Enable==true && Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == False),
 			Event Player.Numz_DamageReceivedLast,
 			Event Player.Numz_DamageTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(White),
 			Default Visibility
 		);
 		Create In-World Text
 		(
-			Filtered Array(All Players(All Teams), Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == True),
+			Filtered Array(All Players(All Teams), Global.Numberz_Enable==true && Event Player.Numz_DamageLastTimer > 0 && Event Player.Numz_DamageWasCritical == True),
 			Event Player.Numz_DamageReceivedLast,
 			Event Player.Numz_DamageTooltipPos, 1.75, Clip Against Surfaces, Visible To Position and String, Color(Red),
 			Default Visibility
@@ -502,6 +1121,106 @@ rule("Numberz - Heal: Timer Run out")
 	}
 }
 
+rule("Infinite Ammo")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		Event Player.InfAmmo==true;
+		(Ammo(Event Player,0)<Max Ammo(Event Player,0) || Ammo(Event Player,1)<Max Ammo(Event Player,1))== True;
+	}
+	
+	actions
+	{
+		Set Ammo(Event Player, 0, 1000);
+		Set Ammo(Event Player, 1, 1000);
+	}
+}
+
+rule("Infinite Ultimate Duration (Lie)")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Event Player.InfUlt==true;
+		Is Button Held(Event Player, Button(Ultimate)) == True;
+		Array Contains
+		(
+			Array(Hero(Ramattra), Hero(Roadhog), Hero(Winston), Hero(Ashe), Hero(Genji), Hero(Mei), Hero(Sojourn), Hero(Soldier: 76),
+						Hero(Widowmaker), Hero(Brigitte), Hero(Kiriko), Hero(Lúcio), Hero(Mercy), Hero(Moira), Hero(Zenyatta)),
+			Hero Of(Event Player)
+		) == true;
+	}
+
+	actions
+	{
+		while (Event Player.InfUlt==true);
+			Set Ultimate Charge(Event Player, 100);
+			Wait(0.016, Ignore Condition);
+			Press Button(Event Player, Button(Ultimate));
+			Wait Until(Is Using Ultimate(Event Player) == False, 99999);
+		End;
+	}
+}
+
+rule("HealthRegen – Timer-Restart")
+{
+	event
+	{
+		Player Took Damage;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		Event Player.HealthRegen==true;
+	}
+	
+	actions
+	{
+		Event Player.HealthRegen_Timer=3;
+		Chase Player Variable Over Time(Event Player, HealthRegen_Timer, 0, 3, None);
+	}
+}
+
+rule("HealthRegen")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		Event Player.HealthRegen==true;
+		Health(Event Player)<Max Health(Event Player);
+		Event Player.HealthRegen_Timer<=0;
+		Is Alive(Event Player)==True;
+	}
+	
+	actions
+	{
+		Heal(Event Player, Null, 50 /10);	//"20" is HP/s
+		Wait(0.100, Ignore Condition);
+		Loop If Condition Is True;
+	}
+}
+
 rule("McCree Button")
 {
 	event
@@ -525,7 +1244,7 @@ rule("McCree Button")
 		Destroy Dummy Bot(Team 2, 0);
 		Create Dummy Bot(Hero(Cassidy), Team 2, -1, Vector(36.860, 0.349, -25.874), Vector(0, 0, 0.800));
 		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(46.960, 8.526, -12.736), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Vector(46.960, 8.525, -12.736), 1);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[21], 1);
 		Global.BotToggle[14] = 1;
 		Abort;
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Cassidy), Team 2)));
@@ -546,7 +1265,7 @@ rule("Zarya Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(26.988, 1.702, -15.138)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[20]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -557,14 +1276,14 @@ rule("Zarya Button")
 		Wait(0.050, Ignore Condition);
 		Destroy Dummy Bot(Team 2, 0);
 		Create Dummy Bot(Hero(Zarya), Team 2, -1, Vector(17.451, 4.099, 1.090), Vector(-0.600, 0, 0.800));
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(26.988, 1.702, -15.138), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Turquoise), Vector(26.988, 1.702, -15.138), 1);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[20], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Turquoise), Global.Buttons[20], 1);
 		Global.BotToggle[13] = 1;
 		Abort;
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Zarya), Team 2)));
 		Global.BotToggle[13] = 0;
-		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(26.988, 1.702, -15.138), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Turquoise), Vector(26.988, 1.702, -15.138), 1);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[20], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Turquoise), Global.Buttons[20], 1);
 	}
 }
 
@@ -579,7 +1298,7 @@ rule("Dva Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(60.735, 12.319, 13.829)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[19]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -590,14 +1309,14 @@ rule("Dva Button")
 		Wait(0.050, Ignore Condition);
 		Destroy Dummy Bot(Team 2, 0);
 		Create Dummy Bot(Hero(D.Va), Team 2, -1, Vector(60.771, 12.741, 19.205), Vector(-0.600, 0, 0.800));
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(60.735, 12.319, 13.829), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Purple), Vector(60.735, 12.319, 13.829), 1);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[19], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Purple), Global.Buttons[19], 1);
 		Global.BotToggle[12] = 1;
 		Abort;
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(D.Va), Team 2)));
 		Global.BotToggle[12] = 0;
-		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(60.735, 12.319, 13.829), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Purple), Vector(60.735, 12.319, 13.829), 1);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[19], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Purple), Global.Buttons[19], 1);
 	}
 }
 
@@ -612,7 +1331,7 @@ rule("Widow Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(51.968, -0.233, 11.827)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[7]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -656,14 +1375,14 @@ rule("Symmetra Button")
 		Destroy Dummy Bot(Team 2, 0);
 		Wait(0.050, Ignore Condition);
 		Create Dummy Bot(Hero(Symmetra), Team 2, -1, Vector(68.073, 7.673, -13.132), Vector(-0.580, 0, 0.810));
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(55.217, 8.879, -22.137), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Vector(55.217, 8.879, -22.137), 1);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[8], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[8], 1);
 		Global.BotToggle[1] = 1;
 		Abort;
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Symmetra), Team 2)));
 		Global.BotToggle[1] = 0;
-		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(55.217, 8.879, -22.137), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Vector(55.217, 8.879, -22.137), 1);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[8], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[8], 1);
 	}
 }
 
@@ -678,7 +1397,7 @@ rule("Pharah Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(85.085, -0.776, 10.119)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[9]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -689,22 +1408,22 @@ rule("Pharah Button")
 		Destroy Dummy Bot(Team 2, 0);
 		Wait(0.050, Ignore Condition);
 		Create Dummy Bot(Hero(Pharah), Team 2, -1, Vector(84.571, 0.076, 7.529), Vector(-0.600, 0, 0.800));
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(85.085, -0.776, 10.119), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Vector(85.085, -0.776, 10.119), 1);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[9], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[9], 1);
 		Global.BotToggle[2] = 1;
 		Abort;
 		Skip If(Global.BotToggle[2] != 1, 7);
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Pharah), Team 2)));
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Mercy), Team 2)));
 		Create Dummy Bot(Hero(Pharah), Team 1, -1, Vector(84.571, 0.076, 7.529), Vector(-0.600, 0, 0.800));
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(Yellow), Vector(85.085, -0.776, 10.119), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Vector(85.085, -0.776, 10.119), 1);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(Yellow), Global.Buttons[9], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Global.Buttons[9], 1);
 		Global.BotToggle[2] = 2;
 		Abort;
 		Destroy Dummy Bot(Team 1, Slot Of(Players On Hero(Hero(Pharah), Team 1)));
 		Global.BotToggle[2] = 0;
-		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(85.085, -0.776, 10.119), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Vector(85.085, -0.776, 10.119), 1);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[9], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[9], 1);
 	}
 }
 
@@ -719,7 +1438,7 @@ rule("Reaper Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(77.125, -2.827, 35.112)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[10]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -731,8 +1450,8 @@ rule("Reaper Button")
 				Wait(0.050, Ignore Condition);
 			End;
 			Create Dummy Bot(Hero(Reaper), Team 2, -1, Vector(77.884, 3.813, 35.699), Vector(0.810, -0.180, 0.560));
-			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(77.125, -2.827, 35.112), 100);
-			Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Vector(77.125, -2.827, 35.112), 1);
+			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[10], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[10], 1);
 			Global.BotToggle[3] = 1;
 			Small Message(Event Player, Custom String("Reaper: Shadow step with wraith form"));
 		Else If(Global.BotToggle[3] == 1);
@@ -741,8 +1460,8 @@ rule("Reaper Button")
 		Else;
 			Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Reaper), Team 2)));
 			Global.BotToggle[3] = 0;
-			Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(77.125, -2.827, 35.112), 100);
-			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Vector(77.125, -2.827, 35.112), 1);
+			Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[10], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[10], 1);
 		End;
 	}
 }
@@ -769,13 +1488,13 @@ rule("Roadhog Button")
 		Destroy Dummy Bot(Team 2, 0);
 		Wait(0.050, Ignore Condition);
 		Create Dummy Bot(Hero(Roadhog), Team 2, -1, Vector(79.684, 8.674, -5.637), Vector(-0.600, 0, 0.800));
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(85.002, 8.413, -5.243), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Vector(85.002, 8.413, -5.243), 1);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[11], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[11], 1);
 		Global.BotToggle[4] = 1;
 		Abort;
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Roadhog), Team 2)));
 		Global.BotToggle[4] = 0;
-		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(85.002, 8.413, -5.243), 100);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[11], 100);
 		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Vector(85.002, 8.414, -5.243), 1);
 	}
 }
@@ -791,7 +1510,7 @@ rule("Tracer Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(36.464, 3.170, 19.845)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[12]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -802,15 +1521,15 @@ rule("Tracer Button")
 		Destroy Dummy Bot(Team 2, 0);
 		Wait(0.050, Ignore Condition);
 		Create Dummy Bot(Hero(Tracer), Team 2, -1, Vector(43.229, 3.173, 11.398), Vector(-0.600, 0, 0.800));
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(36.464, 3.170, 19.845), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Vector(36.464, 3.170, 19.845), 1);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[12], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[12], 1);
 		Global.BotToggle[5] = 1;
 		Players On Hero(Hero(Tracer), Team 2).AI = True;
 		Abort;
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Tracer), Team 2)));
 		Global.BotToggle[5] = 0;
-		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(36.464, 3.170, 19.845), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Vector(36.464, 3.170, 19.845), 1);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[12], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[12], 1);
 	}
 }
 
@@ -825,25 +1544,26 @@ rule("Lucio Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(53.486, -1.176, -8.062)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[13]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
 	actions
 	{
+		"Lúcio"
 		Skip If(Global.BotToggle[6] == 1, 8);
 		Skip If(Number Of Players(Team 2) < 5, 2);
 		Wait(0.050, Ignore Condition);
 		Destroy Dummy Bot(Team 2, 0);
 		Create Dummy Bot(Hero(Lúcio), Team 2, -1, Vector(52.437, -0.827, -15.581), Vector(-0.600, 0, 0.800));
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(53.486, -1.176, -8.062), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Vector(53.486, -1.176, -8.062), 1);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[13], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[13], 1);
 		Global.BotToggle[6] = 1;
 		Abort;
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Lúcio), Team 2)));
 		Global.BotToggle[6] = 0;
-		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(53.486, -1.176, -8.062), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Vector(53.486, -1.176, -8.062), 1);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[13], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[13], 1);
 	}
 }
 
@@ -858,9 +1578,9 @@ rule("Baptiste Button")
 
 	conditions
 	{
-		Distance Between(Vector(77.676, -1, 20.970), Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
-			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Vector(77.676, -1, 20.970)), Null,
-			Event Player, False)) <= 0.400;
+		Distance Between(Global.Buttons[4], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[4]), Null,
+			Event Player, False)) <= 0.4;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -887,9 +1607,9 @@ rule("Ana Button")
 
 	conditions
 	{
-		Distance Between(Vector(79.734, -1, 22.430), Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
-			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Vector(79.734, -1, 22.430)), Null,
-			Event Player, False)) <= 0.400;
+		Distance Between(Global.Buttons[3], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[3]), Null,
+			Event Player, False)) <= 0.4;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -917,9 +1637,9 @@ rule("Mercy Button")
 
 	conditions
 	{
-		Distance Between(Vector(79.734, 1, 22.430), Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
-			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Vector(79.734, 1, 22.430)), Null,
-			Event Player, False)) <= 0.400;
+		Distance Between(Global.Buttons[1], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[1]), Null,
+			Event Player, False)) <= 0.4;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -949,9 +1669,9 @@ rule("Kiriko Button")
 
 	conditions
 	{
-		Distance Between(Vector(77.676, 1, 20.970), Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
-			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Vector(77.676, 1, 20.970)), Null,
-			Event Player, False)) <= 0.400;
+		Distance Between(Global.Buttons[2], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[2]), Null,
+			Event Player, False)) <= 0.4;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -978,7 +1698,7 @@ rule("Genji Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(70.371, -0.827, -20.780)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[14]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -988,15 +1708,15 @@ rule("Genji Button")
 		Skip If(Number Of Players(Team 2) < 5, 2);
 		Wait(0.050, Ignore Condition);
 		Destroy Dummy Bot(Team 2, 0);
-		Create Dummy Bot(Hero(Genji), Team 2, -1, Vector(70.371, -0.827, -20.780), Vector(-0.600, 0, 0.800));
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(70.371, -0.827, -20.780), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Vector(70.371, -0.827, -20.780), 1);
+		Create Dummy Bot(Hero(Genji), Team 2, -1, Global.Buttons[14], Vector(-0.600, 0, 0.800));
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[14], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[14], 1);
 		Global.BotToggle[8] = 1;
 		Abort;
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Genji), Team 2)));
 		Global.BotToggle[8] = 0;
-		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(70.371, -0.827, -20.780), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Vector(70.371, -0.827, -20.780), 1);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[14], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[14], 1);
 	}
 }
 
@@ -1011,7 +1731,7 @@ rule("Mei Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(75.632, -0.502, -17.050)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[15]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -1021,15 +1741,15 @@ rule("Mei Button")
 		Skip If(Number Of Players(Team 2) < 5, 2);
 		Wait(0.050, Ignore Condition);
 		Destroy Dummy Bot(Team 2, 0);
-		Create Dummy Bot(Hero(Mei), Team 2, -1, Vector(75.632, -0.502, -17.050), Vector(-0.600, 0, 0.800));
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(75.632, -0.502, -17.050), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Vector(75.632, -0.502, -17.050), 1);
+		Create Dummy Bot(Hero(Mei), Team 2, -1, Global.Buttons[15], Vector(-0.600, 0, 0.800));
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[15], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[15], 1);
 		Global.BotToggle[9] = 1;
 		Abort;
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Mei), Team 2)));
 		Global.BotToggle[9] = 0;
-		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(75.632, -0.502, -17.050), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Vector(75.632, -0.502, -17.050), 1);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[15], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[15], 1);
 	}
 }
 
@@ -1044,7 +1764,7 @@ rule("Reinhardt Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(64.112, 8.414, -30.584)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[16]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
@@ -1056,17 +1776,17 @@ rule("Reinhardt Button")
 				Wait(0.050, Ignore Condition);
 				Destroy Dummy Bot(Team 2, 0);
 			End;
-			Create Dummy Bot(Hero(Reinhardt), Team 2, -1, Vector(64.112, 8.413, -30.584), Vector(-0.600, 0, 0.800));
-			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(64.112, 8.413, -30.584), 100);
-			Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Vector(64.112, 8.413, -30.584), 1);
+			Create Dummy Bot(Hero(Reinhardt), Team 2, -1, Global.Buttons[16], Vector(-0.600, 0, 0.800));
+			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[16], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[16], 1);
 			"Reinhardt modes: 0 inactive, 1 random, 2 primary, 3 fire strike, 4 charge, 5 ultimate"
 			Global.BotToggle[10] = 1;
 			Small Message(Event Player, Custom String("Reinhardt: Random ability"));
 		"Reinhardt mode is 1...4: increment by 1"
 		Else If(Global.BotToggle[10] < 5);
 			Global.BotToggle[10] = Global.BotToggle[10] + 1;
-			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(64.112, 8.413, -30.584), 100);
-			Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Vector(64.112, 8.413, -30.584), 1);
+			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[16], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Global.Buttons[16], 1);
 			If(Global.BotToggle[10] == 2);
 				Small Message(Event Player, Custom String("Reinhardt: Rocket hammer"));
 			Else If(Global.BotToggle[10] == 3);
@@ -1080,8 +1800,8 @@ rule("Reinhardt Button")
 			"Reinhardt mode is 5: back to 0 = remove him"
 			Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Reinhardt), Team 2)));
 			Global.BotToggle[10] = 0;
-			Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(64.112, 8.413, -30.584), 100);
-			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Vector(64.112, 8.413, -30.584), 1);
+			Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[16], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[16], 1);
 		End;
 	}
 }
@@ -1097,26 +1817,25 @@ rule("Sombra Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(76.424, -2.824, 45.714)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[17]) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
 	actions
 	{
-		Heal(Event Player, Null, 1000);
 		Skip If(Global.BotToggle[11] == 1, 8);
 		Skip If(Number Of Players(Team 2) < 5, 2);
 		Wait(0.050, Ignore Condition);
 		Destroy Dummy Bot(Team 2, 0);
 		Create Dummy Bot(Hero(Sombra), Team 2, -1, Vector(75.148, 0.298, 47.472), Vector(-0.600, 0, 0.800));
-		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Vector(76.424, -2.824, 45.714), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Vector(76.424, -2.824, 45.714), 1);
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[17], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[17], 1);
 		Global.BotToggle[11] = 1;
 		Abort;
 		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Sombra), Team 2)));
 		Global.BotToggle[11] = 0;
-		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Vector(76.424, -2.824, 45.714), 100);
-		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Vector(76.424, -2.824, 45.714), 1);
+		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[17], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[17], 1);
 	}
 }
 
@@ -1275,7 +1994,7 @@ rule("Pharah Bot Up/Down Control")
 		Start Holding Button(Event Player, Button(Jump));
 		Wait(Random Real(0.500, 1), Abort When False);
 		Stop Holding Button(Event Player, Button(Jump));
-		Wait(Random Real(0.300, 0.800), Abort When False);
+		Wait(Random Real(0.3, 0.800), Abort When False);
 		Loop If(Is Alive(Event Player));
 	}
 }
@@ -1587,7 +2306,7 @@ rule("Jump Pad 1")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(56.613, -0.574, -7.100)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[5]) <= 2;
 		Is Button Held(Event Player, Button(Jump)) == True;
 	}
 
@@ -1608,7 +2327,7 @@ rule("Jump Pad 2")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(79.92, -0.574, 8.42)) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[6]) <= 2;
 		Is Button Held(Event Player, Button(Jump)) == True;
 	}
 
@@ -1971,7 +2690,7 @@ rule("Mercy Button Show")
 
 	actions
 	{
-		Create Effect(All Players(All Teams), Sphere, Color(Yellow), Vector(88.878, -0.600, 12.805), 0.400,
+		Create Effect(All Players(All Teams), Sphere, Color(Yellow), Vector(88.878, -0.600, 12.805), 0.4,
 			Visible To Position and Radius);
 		Global.MercyButton = Last Created Entity;
 	}
@@ -2049,7 +2768,7 @@ rule("Mercy Bot Movement")
 		Start Holding Button(Event Player, Button(Jump));
 		Wait(Random Real(0.500, 1.500), Ignore Condition);
 		Stop Holding Button(Event Player, Button(Jump));
-		Wait(Random Real(0.300, 0.800), Ignore Condition);
+		Wait(Random Real(0.3, 0.800), Ignore Condition);
 		Start Holding Button(Event Player, Button(Ability 1));
 		Wait(0.500, Ignore Condition);
 		Start Holding Button(Event Player, Button(Jump));
@@ -2106,7 +2825,7 @@ rule("Kiriko's Support")
 	}
 }
 
-rule("Zayra Charge")
+rule("Zarya Charge")
 {
 	event
 	{
@@ -2117,6 +2836,7 @@ rule("Zayra Charge")
 
 	conditions
 	{
+		Is Button Held(Event Player, Button(Crouch)) == True;
 		Is Button Held(Event Player, Button(Ability 1)) == True;
 	}
 
@@ -2129,6 +2849,38 @@ rule("Zayra Charge")
 			Event Player));
 		Start Facing(Players On Hero(Hero(Torbjörn), Team 2), Direction Towards(Eye Position(Players On Hero(Hero(Torbjörn), Team 2)),
 			Eye Position(Event Player)), 700, To World, Direction and Turn Rate);
+		Wait(0.250, Ignore Condition);
+		Press Button(Players On Hero(Hero(Torbjörn), Team 2), Button(Secondary Fire));
+		Wait(0.250, Ignore Condition);
+		Destroy Dummy Bot(Team 2, Slot Of(Players On Hero(Hero(Torbjörn), Team 2)));
+	}
+}
+
+rule("Doomfist Charger")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Doomfist;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Crouch)) == True;
+		Is Button Held(Event Player, Button(Ability 2)) == True;
+	}
+
+	actions
+	{
+		Skip If(Number Of Players(Team 2) < 5, 2);
+		Destroy Dummy Bot(Team 2, 0);
+		Wait(0.050, Ignore Condition);
+		Create Dummy Bot(Hero(Torbjörn), Team 2, -1, World Vector Of(Forward * 2, Event Player, Rotation And Translation), Eye Position(
+			Event Player));
+		Wait(0.050, Ignore Condition);
+		Set Facing(Players On Hero(Hero(Torbjörn), Team 2), Direction Towards(Eye Position(Players On Hero(Hero(Torbjörn), Team 2)),
+			Eye Position(Event Player)), To World);
 		Wait(0.250, Ignore Condition);
 		Press Button(Players On Hero(Hero(Torbjörn), Team 2), Button(Secondary Fire));
 		Wait(0.250, Ignore Condition);
@@ -2183,7 +2935,7 @@ rule("Mei Abilities")
 		Press Button(Event Player, Button(Ability 1));
 		Wait(5.500, Ignore Condition);
 		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
-		Create Dummy Bot(Hero(Mei), Team 2, -1, Vector(75.632, -0.502, -17.050), Vector(-0.600, 0, 0.800));
+		Create Dummy Bot(Hero(Mei), Team 2, -1, Global.Buttons[15], Vector(-0.600, 0, 0.800));
 		Loop If(Is Alive(Event Player));
 	}
 }
@@ -2200,7 +2952,7 @@ rule("Mei Bot Dies")
 	actions
 	{
 		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
-		Create Dummy Bot(Hero(Mei), Team 2, -1, Vector(75.632, -0.502, -17.050), Vector(-0.600, 0, 0.800));
+		Create Dummy Bot(Hero(Mei), Team 2, -1, Global.Buttons[15], Vector(-0.600, 0, 0.800));
 	}
 }
 
