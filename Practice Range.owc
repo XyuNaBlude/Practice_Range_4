@@ -103,13 +103,14 @@ settings
 variables
 {
 	global:
-		1: PlayerEventInfo
+		1: PlayerEventInfo	//[Tmp, PocketMercy, Lúcio]
 		2: Rnd
 		3: BotToggle
 		5: Time
 		6: Buttons
-		7: MercyButton
-		8: ReaperDirection
+		7: ButtonsEnts
+		8: MercyButton
+		9: ReaperDirection
 		11: Numz_DamageDealtTotal
 		12: Numz_DamageTotalTimer
 		13: Numz_HealDealtTotal
@@ -117,6 +118,7 @@ variables
 		16: ConfigButtsPos
 		17: ConfigButtsEnts
 		25: Numberz_Enable
+		26: InfSupports	//[State, UltEndAwait_Ana, UEA_Baptiste, UEA_Kiriko]
 		
 	player:
 		1: Tmp
@@ -423,6 +425,19 @@ rule("Buttons, Tooltips")
 			Players Within Radius(Global.Buttons[21],5,All Teams, Surfaces),
 			Hero Icon String(Hero(Cassidy)),
 			Global.Buttons[21]+Vector(0,-0.05,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Supports' Inf Ults"
+		Global.Buttons[22]=Vector(79.93,2.92,22.58);
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.Buttons[22], 0.2, Visible To);
+		Global.ButtonsEnts[22]=Last Created Entity;
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[22]+Vector(0,-0.35,0),10,All Teams, Surfaces),
+			Custom String("Repeat"),
+			Global.Buttons[22]+Vector(0,-0.35,0),
+			0.75, Do Not Clip,	Visible To,
+			Color(White), Default Visibility
 		);
 	}
 }
@@ -1221,6 +1236,44 @@ rule("HealthRegen")
 	}
 }
 
+rule("Buttons – Supports' Inf Ults")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		Is Button Held(Event Player,Button(Interact))==True;
+
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[5]),
+			All Players(All Teams), Event Player, True), Global.Buttons[22]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.Buttons[22]) <= 10;
+	}
+	
+	actions
+	{
+		Global.InfSupports[0]=!Global.InfSupports[0];
+		
+		Destroy Effect(Global.ButtonsEnts[22]);
+		if (Global.InfSupports[0]==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.Buttons[22], 0.2, Visible To);
+			Global.ButtonsEnts[22]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.Buttons[22], 0.2, Visible To);
+			Global.ButtonsEnts[22]=Last Created Entity;
+		End;
+	}
+}
+
 rule("McCree Button")
 {
 	event
@@ -1586,13 +1639,14 @@ rule("Baptiste Button")
 
 	actions
 	{
-		Small Message(Global.PlayerEventInfo, 2);
+		Global.PlayerEventInfo[0] = Event Player;
+		
+		Small Message(Event Player, 2);
 		Wait(1, Ignore Condition);
-		Small Message(Global.PlayerEventInfo, 1);
+		Small Message(Event Player, 1);
 		Wait(0.5, Ignore Condition);
 		
 		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.PlayerEventInfo = Event Player;
 	}
 }
 
@@ -1615,13 +1669,14 @@ rule("Ana Button")
 
 	actions
 	{
-		Small Message(Global.PlayerEventInfo, 2);
+		Global.PlayerEventInfo[0] = Event Player;
+		
+		Small Message(Event Player, 2);
 		Wait(1, Ignore Condition);
-		Small Message(Global.PlayerEventInfo, 1);
+		Small Message(Event Player, 1);
 		Wait(0.5, Ignore Condition);
 		
 		Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.PlayerEventInfo = Event Player;
 		
 	}
 }
@@ -1645,15 +1700,15 @@ rule("Mercy Button")
 
 	actions
 	{
-		if (Global.PlayerEventInfo != Event Player);
+		if (Global.PlayerEventInfo[1] != Event Player);
 			Create Dummy Bot(Hero(Mercy), Team 1, -1, Vector(84,-3,18), Direction Towards(Position Of(Event Player), Eye Position(Event Player)));
 			Wait(0.25, Ignore Condition);
 			Set Status(Last Created Entity, Null, Phased Out, 9999);
 			Teleport(Last Created Entity, Position Of(Event Player - Vector(1,1,1)));
-			Global.PlayerEventInfo = Event Player;
+			Global.PlayerEventInfo[1] = Event Player;
 		else;
 			Destroy Dummy Bot(Team 1, Slot Of(Players On Hero(Hero(Mercy), Team 1)));
-			Global.PlayerEventInfo = Null;
+			Global.PlayerEventInfo[1] = Null;
 		End;
 	}
 }
@@ -1677,13 +1732,18 @@ rule("Kiriko Button")
 
 	actions
 	{
-		Small Message(Global.PlayerEventInfo, 2);
+		Global.PlayerEventInfo[0] = Event Player;
+		
+		Small Message(Event Player, 2);
 		Wait(1, Ignore Condition);
-		Small Message(Global.PlayerEventInfo, 1);
+		Small Message(Event Player, 1);
 		Wait(0.5, Ignore Condition);
 		
-		Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.PlayerEventInfo = Event Player;
+//		while (Global.InfSupports[0]==true);
+			Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+//			Wait Until(Is Using Ultimate(Global.InfSupports[3])==True, 10);
+//			Wait Until(Is Using Ultimate(Global.InfSupports[3])==False, 30);
+//		End;
 	}
 }
 
@@ -1855,10 +1915,10 @@ rule("Baptiste Amplification Matrix")
 
 	actions
 	{
-		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo), 1000, To World, Direction and Turn Rate);
+		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0]), 1000, To World, Direction and Turn Rate);
 		Set Ultimate Charge(Event Player, 100);
 		Set Status(Event Player, Null, Phased Out, 5);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0]));
 		Wait(0.1, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
 		Wait(0.050, Ignore Condition);
@@ -1887,17 +1947,12 @@ rule("Ana Nano Boost")
 
 	actions
 	{
-		//Small Message(Global.PlayerEventInfo, 2);
-		//Wait(1, Ignore Condition);
-		//Small Message(Global.PlayerEventInfo, 1);
-		//Wait(0.5, Ignore Condition);
-		
-		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo)), 5100, To World, Direction and Turn Rate);
+		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo[0])), 5100, To World, Direction and Turn Rate);
 		Wait(0.050, Ignore Condition);
 		Set Ultimate Charge(Event Player, 100);
 		Wait(0.250, Ignore Condition);
 		Set Status(Event Player, Null, Phased Out, 5);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo) + Facing Direction Of(Event Player) * 3);
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0]) + Facing Direction Of(Event Player) * 3);
 		Wait(0.25, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
 		Wait(0.25, Ignore Condition);
@@ -1924,7 +1979,7 @@ rule("Mercy Pocket P1")
 
 	actions
 	{
-		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Position Of(Global.PlayerEventInfo)), 1000, To World, Direction and Turn Rate);
+		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Position Of(Global.PlayerEventInfo[1])), 1000, To World, Direction and Turn Rate);
 		Set Weapon(Event Player, 1);
 		Start Holding Button(Event Player, Button(Secondary Fire));
 	}
@@ -1941,7 +1996,7 @@ rule("Mercy Pocket P2")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Position Of(Global.PlayerEventInfo)) >= 3;
+		Distance Between(Position Of(Event Player), Position Of(Global.PlayerEventInfo[1])) >= 3;
 		Is Dummy Bot(Event Player) == True;
 	}
 
@@ -1962,13 +2017,13 @@ rule("Mercy Pocket P3")
 
 	conditions
 	{
-		(Is In Line of Sight(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo), Barriers Do Not Block LOS) == False || Distance Between(Event Player, Position Of(Event Player)) >= 14) == True;
+		(Is In Line of Sight(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo[1]), Barriers Do Not Block LOS) == False || Distance Between(Event Player, Position Of(Event Player)) >= 14) == True;
 		Is Dummy Bot(Event Player) == True;
 	}
 
 	actions
 	{
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo[1]));
 	}
 }
 
@@ -2810,12 +2865,12 @@ rule("Kiriko's Support")
 
 	actions
 	{
-		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo), 1000, To World, Direction and Turn Rate);
+		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0]), 1000, To World, Direction and Turn Rate);
 		Wait(0.050, Ignore Condition);
 		Set Ultimate Charge(Event Player, 100);
 		Wait(0.250, Ignore Condition);
 		Set Status(Event Player, Null, Phased Out, 5);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo));
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0]));
 		Press Button(Event Player, Button(Ultimate));
 		Wait(0.75, Ignore Condition);
 		Set Status(Event Player, Null, Hacked, 1);
@@ -3247,8 +3302,8 @@ disabled rule("Voiceline_Up – Discord")
 
 	actions
 	{
+		Global.PlayerEventInfo[0] = Event Player;
 		Create Dummy Bot(Hero(Zenyatta), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.PlayerEventInfo = Event Player;
 	}
 }
 
@@ -3268,8 +3323,8 @@ rule("Voiceline_Left – Nano")
 
 	actions
 	{
+		Global.PlayerEventInfo[0] = Event Player;
 		Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.PlayerEventInfo = Event Player;
 	}
 }
 
@@ -3289,8 +3344,8 @@ rule("Voiceline_Right – Matrix")
 
 	actions
 	{
+		Global.PlayerEventInfo[0] = Event Player;
 		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.PlayerEventInfo = Event Player;
 	}
 }
 
@@ -3310,8 +3365,8 @@ rule("Voiceline_Down – Kitsune")
 
 	actions
 	{
+		Global.PlayerEventInfo[0] = Event Player;
 		Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.PlayerEventInfo = Event Player;
 	}
 }
 
@@ -3339,7 +3394,7 @@ rule("Ultimate Support")
 			Small Message(Event Player, Custom String("But nobody came..."));
 		else;
 			Wait(2, Ignore Condition);
-			Global.PlayerEventInfo = Event Player;
+			Global.PlayerEventInfo[0] = Event Player;
 			Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 			Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 			Wait(1, Ignore Condition);
