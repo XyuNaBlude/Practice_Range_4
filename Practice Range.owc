@@ -478,8 +478,15 @@ rule("Configuration – ButtonTrigger – NoCooldowns")
 	
 	actions
 	{
-		Big Message(Event Player, Custom String(".!. 'Blizzard Quality Experience' .!."));
+		Big Message(Event Player, Custom String(".!. ''Blizzard Quality Experience'' .!."));
 		Small Message(Event Player, Custom String("not gonna work"));
+		Wait(2, Ignore Condition);
+		Small Message(Event Player, Custom String("But you can change it in Lobby Settings / Heroes / General / Ability Cooldown Time.  Then restart the Match :)"));
+		Wait(2.9, Ignore Condition);
+		Small Message(Event Player, Custom String("But you can change it in Lobby Settings / Heroes / General / Ability Cooldown Time.  Then restart the Match :)"));
+		Wait(2.9, Ignore Condition);
+		Small Message(Event Player, Custom String("But you can change it in Lobby Settings / Heroes / General / Ability Cooldown Time.  Then restart the Match :)"));
+		Wait(5, Ignore Condition);
 	}
 }
 
