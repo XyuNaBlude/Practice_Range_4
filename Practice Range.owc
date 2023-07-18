@@ -3042,9 +3042,9 @@ rule("Pharah's_Mercy Bot Dies")
 
 	actions
 	{
-		Respawn(Event Player);
-		Wait(0.500, Ignore Condition);
-		Teleport(Event Player, Position Of (Global.Dummies[2]));
+		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
+		Create Dummy Bot(Hero(Mercy), Team 2, -1, Position Of(Global.Dummies[2]) - Facing Direction Of(Global.Dummies[2]), Vector(-0.600, 0, 0.800));
+		Global.Dummies[7]=Last Created Entity;
 	}
 }
 
