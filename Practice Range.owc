@@ -3175,6 +3175,7 @@ rule("Genji Bot Dies")
 
 	actions
 	{
+		Wait(0.25, Ignore Condition);	//Delay to see kill-credit
 		Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[8]));
 		Create Dummy Bot(Hero(Genji), Team 2, -1, Vector(70.368, -0.799, -20.782), Vector(-0.600, 0, 0.800));
 		Global.Dummies[8]=Last Created Entity;
@@ -3232,6 +3233,7 @@ rule("Mei Bot Dies")
 
 	actions
 	{
+		Wait(0.25, Ignore Condition);	//Delay to see kill-credit
 		Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[9]));
 		Create Dummy Bot(Hero(Mei), Team 2, -1, Global.Buttons[15], Vector(-0.600, 0, 0.800));
 		Global.Dummies[9]=Last Created Entity;
