@@ -2016,10 +2016,10 @@ rule("Baptiste Amplification Matrix")
 
 	actions
 	{
-		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0]), 1000, To World, Direction and Turn Rate);
+		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0])+Vector(0,-0.25,0), 1000, To World, Direction and Turn Rate);
 		Set Ultimate Charge(Event Player, 100);
 		Set Status(Event Player, Null, Phased Out, 5);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0]));
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0])+Vector(0,0,-1));
 		Wait(0.1, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
 		Wait(0.050, Ignore Condition);
@@ -2055,7 +2055,7 @@ rule("Ana_Nano Boost")
 		Set Ultimate Charge(Event Player, 100);
 		Wait(0.250, Ignore Condition);
 		Set Status(Event Player, Null, Phased Out, 5);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0]) + Facing Direction Of(Event Player) * 3);
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0])+Vector(0,0,-1));
 		Wait(0.25, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
 		Wait(0.25, Ignore Condition);
