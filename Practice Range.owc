@@ -4049,3 +4049,21 @@ rule("Ultimate Support")
 		End;
 	}
 }
+
+rule("Bots Limit")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+
+	conditions
+	{
+		Count Of(All Players(All Teams))>=12;
+	}
+
+	actions
+	{
+		Big Message(All Players(All Teams), Custom String("Warning! Bots Limit is Reached."));
+	}
+}
