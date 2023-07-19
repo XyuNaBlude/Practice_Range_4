@@ -119,7 +119,7 @@ variables
 		16: ConfigButtsPos
 		17: ConfigButtsEnts
 		25: Numberz_Enable
-		26: InfSupports	//[State, UltEndAwait_Ana, UEA_Baptiste, UEA_Kiriko]
+		26: InfSupports
 		
 	player:
 		1: Tmp
@@ -1286,16 +1286,15 @@ rule("Buttons – Supports' Inf Ults")
 	
 	actions
 	{
-		Global.InfSupports[0]=!Global.InfSupports[0];
+		Global.InfSupports=!Global.InfSupports;
 		
 		Destroy Effect(Global.ButtonsEnts[22]);
-		if (Global.InfSupports[0]==true);
+		if (Global.InfSupports==true);
 			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.Buttons[22], 0.2, Visible To);
-			Global.ButtonsEnts[22]=Last Created Entity;
 		else;
 			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.Buttons[22], 0.2, Visible To);
-			Global.ButtonsEnts[22]=Last Created Entity;
 		End;
+		Global.ButtonsEnts[22]=Last Created Entity;
 	}
 }
 
@@ -1315,7 +1314,8 @@ rule("McCree Button")
 	}
 
 	actions
-	{if ((Global.Dummies[14]==Null) || (Entity Exists(Global.Dummies[14])==false));
+	{
+		if ((Global.Dummies[14]==Null) || (Entity Exists(Global.Dummies[14])==false));
 			"Button effect"
 			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[21], 100);
 			Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[21], 1);
@@ -1695,8 +1695,16 @@ rule("Baptiste_Matrix Button")
 		Small Message(Event Player, 1);
 		Wait(0.5, Ignore Condition);
 		
-		Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.Dummies[17]=Last Created Entity;
+		if (Global.InfSupports!=true);
+			Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			Global.Dummies[17]=Last Created Entity;
+		else;
+			while (Global.InfSupports==true);
+				Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+				Global.Dummies[17]=Last Created Entity;
+				Wait(10.5-0.5, Ignore Condition);
+			End;
+		End;
 	}
 }
 
@@ -1726,8 +1734,16 @@ rule("Ana_Nano Button")
 		Small Message(Event Player, 1);
 		Wait(0.5, Ignore Condition);
 		
-		Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
-		Global.Dummies[16]=Last Created Entity;
+		if (Global.InfSupports!=true);
+			Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			Global.Dummies[16]=Last Created Entity;
+		else;
+			while (Global.InfSupports==true);
+				Create Dummy Bot(Hero(Ana), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+				Global.Dummies[16]=Last Created Entity;
+				Wait(8.5-0.25, Ignore Condition);
+			End;
+		End;
 	}
 }
 
@@ -1765,7 +1781,7 @@ rule("Pocket_Mercy Button")
 	}
 }
 
-rule("Kiriko Button")
+rule("Kiriko_Rush Button")
 {
 	event
 	{
@@ -1791,12 +1807,17 @@ rule("Kiriko Button")
 		Small Message(Event Player, 1);
 		Wait(0.5, Ignore Condition);
 		
-//		while (Global.InfSupports[0]==true);
+		if (Global.InfSupports!=true);	//default
 			Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 			Global.Dummies[18]=Last Created Entity;
-//			Wait Until(Is Using Ultimate(Global.InfSupports[3])==True, 10);
-//			Wait Until(Is Using Ultimate(Global.InfSupports[3])==False, 30);
-//		End;
+		else;
+			while (Global.InfSupports==true);
+				Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+				Global.Dummies[18]=Last Created Entity;
+//				Wait Until(Is Using Ultimate(Global.Dummies[18])==True, 12);	//can't read properly
+				Wait(12-0.75, Ignore Condition);
+			End;
+		End;
 	}
 }
 
