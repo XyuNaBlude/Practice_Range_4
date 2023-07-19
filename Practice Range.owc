@@ -183,7 +183,7 @@ rule("Global Variables")
 		Global.Dummies[4]=Null;
 		"Tracer"
 		Global.Dummies[5]=Null;
-		"Lucio"
+		"Lucio"	// Lúcio
 		Global.Dummies[6]=Null;
 		"Enemy Pharah's Mercy"
 		Global.Dummies[7]=Null;
@@ -211,6 +211,10 @@ rule("Global Variables")
 		Global.Dummies[17]=Null;
 		"Kiriko_Rush"
 		Global.Dummies[18]=Null;
+		"Pocket_Lucio"
+		Global.Dummies[19]=Null;
+		"Zen_Discord"
+		Global.Dummies[20]=Null;
 //		"template"
 //		Global.Dummies[999]=Null;
 
@@ -457,6 +461,26 @@ rule("Buttons, Tooltips")
 		
 		"Pharah's_Mercy Button"
 		Global.Buttons[23]=Vector(88.878,-0.600,12.805);
+		
+		"Pocket_Lucio Button"
+		Global.Buttons[24]=Vector(78.71,1,21.71);
+		Create Effect(All Players(All Teams), Sphere, Color(Green), Global.Buttons[24], 0.4, Visible To Position and Radius);
+		Create In-World Text
+		(
+			Players Within Radius(Vector(78.7,-0.25,21.7),12,All Teams, Surfaces),
+			Ability Icon String(Hero(Lúcio), Button(Ability 1)),
+			Global.Buttons[24]+Vector(0,-0.2,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Zen_Discord Button"
+		Global.Buttons[25]=Vector(79.734,0,22.43);
+		Create Effect(All Players(All Teams), Sphere, Color(Purple), Global.Buttons[25], 0.4, Visible To Position and Radius);
+		Create In-World Text
+		(
+			Players Within Radius(Vector(78.7,-0.25,21.7),12,All Teams, Surfaces),
+			Ability Icon String(Hero(Zenyatta), Button(Ability 2)),
+			Global.Buttons[25]+Vector(0,-0.2,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
 	}
 }
 
@@ -2114,7 +2138,7 @@ rule("Pocket_Mercy")
 	}
 }
 
-rule("Pocket_Mercy – Heal")	//Lúcio
+rule("Pocket_Mercy - Heal")
 {
 	event
 	{
@@ -2129,7 +2153,7 @@ rule("Pocket_Mercy – Heal")	//Lúcio
 		Health(Event Player)<Max Health(Event Player);
 		Is Communicating(Event Player, Need Healing)==True;
 		Is Alive(Global.PlayerEventInfo[5])==True;
-		Is Alive(Event Player) == True;
+		Is Alive(Event Player)==True;
 	}
 
 	actions
@@ -3601,6 +3625,112 @@ rule("McCree Bot Dies")
 		Global.Dummies[14]=Last Created Entity;
 	}
 }
+
+rule("Pocket_Lucio Button")	//Lúcio
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Interact)) == True;
+		Distance Between(Global.Buttons[24], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[24]), Null,
+			Event Player, False)) <= 0.4;
+	}
+
+	actions
+	{
+		if ((Global.Dummies[19]==Null) || (Entity Exists(Global.Dummies[19])==false));
+			Create Dummy Bot(Hero(Lúcio), Team 1, -1, Vector(84,-3,18), Direction Towards(Position Of(Event Player), Eye Position(Event Player)));
+			Global.Dummies[19]=Last Created Entity;
+			Global.PlayerEventInfo[6]=Event Player;
+			Small Message(Event Player, Custom String("Use ''Need Healing!'' for Boost"));
+		else;
+			Communicate(Global.Dummies[19], Goodbye);
+			Wait(1, Ignore Condition);
+			Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[19]));
+			Global.Dummies[19]=Null;
+			Global.PlayerEventInfo[6]=Null;
+		End;
+	}
+}
+
+rule("Pocket_Lucio")	//Lúcio
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Lúcio;
+	}
+	
+	conditions
+	{
+		Event Player == Global.Dummies[19];
+		Is Alive(Global.PlayerEventInfo[6]) == True;
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		"Preps"
+		Wait(0.25, Ignore Condition);
+		Start Scaling Player(Event Player, 0.15, True);
+		Set Status(Event Player, Null, Phased Out, 9999);
+		Start Forcing Dummy Bot Name(Event Player, Custom String("Pocket Lúcio"));
+		Communicate(Event Player, Hello);
+		
+		"Cycle"
+		while (Global.PlayerEventInfo[6]!=Null);
+			Wait Until(Is Alive(Event Player)==True, 9999);
+			Wait Until(Is Alive(Global.PlayerEventInfo[6])==True, 9999);
+			Attach Players(Event Player, Global.PlayerEventInfo[6], Vector(0,-1.25,-1)+Eye Position(Global.PlayerEventInfo[6])-Position Of(Global.PlayerEventInfo[6]));
+			Global.PlayerEventInfo[1]=Hero Of(Global.PlayerEventInfo[6]);
+			Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[6]), 100, To World, Direction and Turn Rate);
+			
+			Wait Until
+			(
+				Is Alive(Global.PlayerEventInfo[6])==False
+		||	Global.PlayerEventInfo[1]!=Hero Of(Global.PlayerEventInfo[6])
+		||	Is Alive(Event Player)==False, 9999
+			);
+			Stop Facing(Event Player);
+			Detach Players(Event Player);
+
+		End;
+	}
+}
+
+rule("Pocket_Lucio - Boost")	//Lúcio
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		Global.Dummies[19]!=Null;
+		Is Communicating(Event Player, Need Healing)==True;
+		Is Alive(Event Player)==True;
+		Is Alive(Global.PlayerEventInfo[6])==True;
+	}
+
+	actions
+	{
+		Set Ability Cooldown(Global.Dummies[19], Button(Ability 2),0);
+		Press Button(Global.Dummies[19], Button(Ability 2));
+		//Communicate(Global.Dummies[19], Go);	//annoying response
+	}
+}
+
 
 disabled rule("Voiceline_Up – Discord")
 {
