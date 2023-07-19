@@ -3735,8 +3735,110 @@ rule("Pocket_Lucio - Boost")	//Lúcio
 	}
 }
 
+rule("Zen_Discord Button")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
 
-disabled rule("Voiceline_Up – Discord")
+	conditions
+	{
+		Is Button Held(Event Player, Button(Interact)) == True;
+		Distance Between(Global.Buttons[25], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[25]), Null,
+			Event Player, False)) <= 0.4;
+	}
+
+	actions
+	{
+		if (Global.Dummies[20]!=null);
+			disabled Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[20]));
+		End;
+		
+		Small Message(Event Player, 3);
+		Wait(1, Ignore Condition);
+		Small Message(Event Player, 2);
+		Wait(1, Ignore Condition);
+		Small Message(Event Player, 1);
+		Wait(0.5, Ignore Condition);
+		
+		Global.PlayerEventInfo[0]=Event Player;
+		Create Dummy Bot(Hero(Zenyatta), Team 1, -1, Vector(84,-3,18), Direction Towards(Position Of(Event Player), Eye Position(Event Player)));
+		Global.Dummies[20]=Last Created Entity;
+	}
+}
+
+rule("Zen_Discord")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Zenyatta;
+	}
+	
+	conditions
+	{
+		Event Player == Global.Dummies[20];
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		"Preps"
+		Start Scaling Player(Event Player, 0.1, True);
+		Set Status(Event Player, Null, Phased Out, 9999);
+		Start Forcing Dummy Bot Name(Event Player, Custom String("Zen_Discord"));
+		
+		Attach Players(Event Player, Global.PlayerEventInfo[0], Vector(0,0,0.25)+Eye Position(Global.PlayerEventInfo[0])-Position Of(Global.PlayerEventInfo[0]));
+		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0]), 1000, To World, Direction and Turn Rate);
+		Wait(0.25, Ignore Condition);
+		Press Button(Event Player, Button(Ability 2));
+		Attach Players(Event Player, Global.PlayerEventInfo[0], Vector(0,0.25,0)+Eye Position(Global.PlayerEventInfo[0])-Position Of(Global.PlayerEventInfo[0]));
+		Wait Until(Is Using Ability 2(Event Player)==true, 1);
+
+		// Advansed Search
+		if (Is Using Ability 2(Event Player)==false);	//Zen will try to shorten the distance to the target
+			"Notification"
+			Small Message(Global.PlayerEventInfo[0], Custom String("(advanced mode)"));
+			Small Message(Global.PlayerEventInfo[0], Custom String("Searching for target..."));
+			"Cycle Logic"
+			Detach Players(Event Player);
+			Stop Facing(Event Player);
+			Event Player.Tmp=0;
+			while ((Is Using Ability 2(Event Player)==false) && (Event Player.Tmp<7) && (Is Alive(Event Player)==true));
+				Event Player.Tmp+=1;
+				Start Forcing Player Position(Event Player, Position Of(Event Player)+Facing Direction Of(Event Player)*5, False);
+				Wait(0.25, Ignore Condition);
+				Press Button(Event Player, Button(Ability 2));
+				Wait Until(Is Using Ability 2(Event Player)==true, 1);
+			End;
+			Stop Forcing Player Position(Event Player);
+			"Cycle Result Logic"
+			if (Is Using Ability 2(Event Player)==true);
+				Communicate(Event Player, Attacking);	//Notify if target was found and where
+				Attach Players(Event Player, Global.PlayerEventInfo[0], Vector(0,0.25,0)+Eye Position(Global.PlayerEventInfo[0])-Position Of(Global.PlayerEventInfo[0]));
+			else;
+				Small Message(Global.PlayerEventInfo[0], Custom String("Zen couldn't reach any target in this direction"));
+			End;
+		End;
+		// Advansed Search
+		
+		Wait Until
+		(
+			Is Using Ability 2(Event Player)==false
+	||	Is Alive(Event Player)==false
+	||	Is Alive(Event Player)==False,	9999
+		);
+		
+		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
+	}
+}
+
+rule("Voiceline_Up – Discord")
 {
 	event
 	{
@@ -3752,6 +3854,10 @@ disabled rule("Voiceline_Up – Discord")
 
 	actions
 	{
+		if (Global.Dummies[20]!=null);
+			disabled Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[20]));
+		End;
+		
 		Global.PlayerEventInfo[0] = Event Player;
 		Create Dummy Bot(Hero(Zenyatta), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 		Global.Dummies[20]=Last Created Entity;
@@ -3849,6 +3955,8 @@ rule("Ultimate Support")
 		else;
 			Wait(2, Ignore Condition);
 			Global.PlayerEventInfo[0] = Event Player;
+			Create Dummy Bot(Hero(Zenyatta), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+			Global.Dummies[20]=Last Created Entity;
 			Create Dummy Bot(Hero(Kiriko), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
 			Global.Dummies[18]=Last Created Entity;
 			Create Dummy Bot(Hero(Baptiste), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
