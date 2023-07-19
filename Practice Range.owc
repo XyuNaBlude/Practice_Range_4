@@ -249,7 +249,7 @@ rule("Buttons, Tooltips")
 	actions
 	{
 		"Pocket_Mercy Button"
-		Global.Buttons[1]=Vector(79.734,1,22.430);
+		Global.Buttons[1]=Vector(79.734,1,22.43);
 		Create Effect(All Players(All Teams), Sphere, Color(Yellow), Global.Buttons[1], 0.4, Visible To Position and Radius);
 		Create In-World Text
 		(
@@ -259,7 +259,7 @@ rule("Buttons, Tooltips")
 		);
 		
 		"Kiriko_Rush Button"
-		Global.Buttons[2]=Vector(77.676,1,20.970);
+		Global.Buttons[2]=Vector(77.676,1,20.97);
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.Buttons[2], 0.4, Visible To Position and Radius);
 		Create In-World Text
 		(
@@ -269,7 +269,7 @@ rule("Buttons, Tooltips")
 		);
 
 		"Ana_Nano Button"
-		Global.Buttons[3]=Vector(79.734,-1,22.430);
+		Global.Buttons[3]=Vector(79.734,-1,22.43);
 		Create Effect(All Players(All Teams), Sphere, Color(Blue), Global.Buttons[3], 0.4, Visible To Position and Radius);
 		Create In-World Text
 		(
@@ -279,7 +279,7 @@ rule("Buttons, Tooltips")
 		);
 
 		"Baptiste_Matrix Button"
-		Global.Buttons[4]=Vector(77.676,-1,20.970);
+		Global.Buttons[4]=Vector(77.676,-1,20.97);
 		Create Effect(All Players(All Teams), Sphere, Color(Turquoise), Global.Buttons[4], 0.4, Visible To Position and Radius);
 		Create In-World Text
 		(
@@ -1210,7 +1210,7 @@ rule("Infinite Ultimate Duration (Lie)")
 			Set Ultimate Charge(Event Player, 100);
 			Wait(0.016, Ignore Condition);
 			Press Button(Event Player, Button(Ultimate));
-			Wait Until(Is Using Ultimate(Event Player) == False, 99999);
+			Wait Until(Is Using Ultimate(Event Player) == False, 9999);
 		End;
 	}
 }
@@ -1680,10 +1680,10 @@ rule("Baptiste_Matrix Button")
 
 	conditions
 	{
+		Is Button Held(Event Player, Button(Interact)) == True;
 		Distance Between(Global.Buttons[4], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
 			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[4]), Null,
 			Event Player, False)) <= 0.4;
-		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
 	actions
@@ -1719,10 +1719,10 @@ rule("Ana_Nano Button")
 
 	conditions
 	{
+		Is Button Held(Event Player, Button(Interact)) == True;
 		Distance Between(Global.Buttons[3], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
 			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[3]), Null,
 			Event Player, False)) <= 0.4;
-		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
 	actions
@@ -1758,10 +1758,10 @@ rule("Pocket_Mercy Button")
 
 	conditions
 	{
+		Is Button Held(Event Player, Button(Interact)) == True;
 		Distance Between(Global.Buttons[1], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
 			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[1]), Null,
 			Event Player, False)) <= 0.4;
-		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
 	actions
@@ -1771,7 +1771,7 @@ rule("Pocket_Mercy Button")
 			Global.Dummies[15]=Last Created Entity;
 			Global.PlayerEventInfo[5]=Event Player;
 		else;
-			Destroy Dummy Bot(Team 1, Slot Of(Players On Hero(Hero(Mercy), Team 1)));
+			Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[15]));
 			Global.Dummies[15]=Null;
 			Global.PlayerEventInfo[5]=Null;
 		End;
@@ -1789,10 +1789,10 @@ rule("Kiriko_Rush Button")
 
 	conditions
 	{
+		Is Button Held(Event Player, Button(Interact)) == True;
 		Distance Between(Global.Buttons[2], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
 			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[2]), Null,
 			Event Player, False)) <= 0.4;
-		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
 	actions
@@ -2076,7 +2076,7 @@ rule("Pocket_Mercy")
 	conditions
 	{
 		Event Player == Global.Dummies[15];
-		Is Alive(Global.PlayerEventInfo[5]) == True;
+		Is Alive(Global.PlayerEventInfo[5])==True;
 		Is Alive(Event Player) == True;
 	}
 
@@ -2086,12 +2086,12 @@ rule("Pocket_Mercy")
 		Wait(0.25, Ignore Condition);
 		Start Scaling Player(Event Player, 0.15, True);
 		Set Status(Event Player, Null, Phased Out, 9999);
-		Start Forcing Dummy Bot Name(Global.Dummies[15], Custom String("Pocket Mercy"));
+		Start Forcing Dummy Bot Name(Event Player, Custom String("Pocket Mercy"));
 		
 		"Cycle"
 		while (Global.PlayerEventInfo[5]!=Null);
-			Wait Until(Is Alive(Event Player)==True, 99999);
-			Wait Until(Is Alive(Global.PlayerEventInfo[5])==True, 99999);
+			Wait Until(Is Alive(Event Player)==True, 9999);
+			Wait Until(Is Alive(Global.PlayerEventInfo[5])==True, 9999);
 			Attach Players(Event Player, Global.PlayerEventInfo[5], Vector(0,-0.25,-1)+Eye Position(Global.PlayerEventInfo[5])-Position Of(Global.PlayerEventInfo[5]));
 			Global.PlayerEventInfo[1]=Hero Of(Global.PlayerEventInfo[5]);
 			Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Position Of(Global.PlayerEventInfo[5])), 1000, To World, Direction and Turn Rate);
@@ -2104,7 +2104,7 @@ rule("Pocket_Mercy")
 			(
 				Is Alive(Global.PlayerEventInfo[5])==False
 		||	Global.PlayerEventInfo[1]!=Hero Of(Global.PlayerEventInfo[5])
-		||	Is Alive(Event Player)==False, 99999
+		||	Is Alive(Event Player)==False, 9999
 			);
 			Stop Facing(Event Player);
 			Detach Players(Event Player);
@@ -3591,6 +3591,7 @@ disabled rule("Voiceline_Up – Discord")
 	{
 		Global.PlayerEventInfo[0] = Event Player;
 		Create Dummy Bot(Hero(Zenyatta), Team 1, -1, Vector(84,-3,18), Facing Direction Of(Event Player));
+		Global.Dummies[20]=Last Created Entity;
 	}
 }
 
