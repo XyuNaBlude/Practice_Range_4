@@ -1770,6 +1770,7 @@ rule("Pocket_Mercy Button")
 			Create Dummy Bot(Hero(Mercy), Team 1, -1, Vector(84,-3,18), Direction Towards(Position Of(Event Player), Eye Position(Event Player)));
 			Global.Dummies[15]=Last Created Entity;
 			Global.PlayerEventInfo[5]=Event Player;
+			Small Message(Event Player, Custom String("Use ''Need Healing!'' for Heal"));
 		else;
 			Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[15]));
 			Global.Dummies[15]=Null;
@@ -2110,6 +2111,34 @@ rule("Pocket_Mercy")
 			Detach Players(Event Player);
 
 		End;
+	}
+}
+
+rule("Pocket_Mercy – Heal")	//Lúcio
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		Global.Dummies[15]!=Null;
+		Health(Event Player)<Max Health(Event Player);
+		Is Communicating(Event Player, Need Healing)==True;
+		Is Alive(Global.PlayerEventInfo[5])==True;
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		Stop Holding Button(Global.Dummies[15], Button(Secondary Fire));
+		Start Holding Button(Global.Dummies[15], Button(Primary Fire));
+		Wait Until(Health(Event Player)>=Max Health(Event Player), 9999);
+		Stop Holding Button(Global.Dummies[15], Button(Primary Fire));
+		Start Holding Button(Global.Dummies[15], Button(Secondary Fire));
 	}
 }
 
