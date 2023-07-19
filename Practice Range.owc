@@ -2021,7 +2021,7 @@ rule("Sombra Button")
 	}
 }
 
-rule("Baptiste Amplification Matrix")
+rule("Baptiste_Matrix")
 {
 	event
 	{
