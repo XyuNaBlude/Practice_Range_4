@@ -495,6 +495,7 @@ rule("Configuration – Initialization")
 	actions
 	{
 		"Buttons Positions"
+		Global.ConfigButtsPos[0]=Vector(58.72,4.3,32.31);	//Visibility anchor
 		Global.ConfigButtsPos[1]=Vector(58.58,5.80,31.45);
 		Global.ConfigButtsPos[2]=Vector(58.58,5.05,31.45);
 		Global.ConfigButtsPos[3]=Vector(58.58,4.3,31.45);
@@ -519,7 +520,7 @@ rule("Configuration – Initialization")
 		);
 		
 		"\n"
-		"#Gaps: Tooltip:-0.35, Sphere:(?,-0.75,?)"
+		"#Gaps: Tooltip:-0.35, Row:(?,-0.75,?)"
 		"\n\n"
 		
 		"1st column\n"
@@ -528,7 +529,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[1]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[1]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("No Cooldowns"),
 			Global.ConfigButtsPos[1]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
@@ -540,7 +541,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[2]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[2]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("Infinite Ammo"),
 			Global.ConfigButtsPos[2]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
@@ -552,7 +553,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[3]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[3]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("Invincibility"),
 			Global.ConfigButtsPos[3]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
@@ -564,7 +565,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[4]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[4]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("Inf Ult duration*"),
 			Global.ConfigButtsPos[4]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
@@ -578,7 +579,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[5]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[5]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("Health Regen"),
 			Global.ConfigButtsPos[5]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
@@ -590,7 +591,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[6]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[6]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("placeholder"),
 			Global.ConfigButtsPos[6]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
@@ -602,7 +603,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[7]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[7]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("placeholder"),
 			Global.ConfigButtsPos[7]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
@@ -614,7 +615,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[8]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[8]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("placeholder"),
 			Global.ConfigButtsPos[8]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
@@ -629,7 +630,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[9]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[9]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("Dmg/Heal\nNumbers"),
 			Global.ConfigButtsPos[9]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
@@ -642,7 +643,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[10]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[10]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("Supports\nVoicelines"),
 			Global.ConfigButtsPos[10]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
@@ -654,7 +655,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[11]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[11]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("placeholder"),
 			Global.ConfigButtsPos[11]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
@@ -666,7 +667,7 @@ rule("Configuration – Initialization")
 		Global.ConfigButtsEnts[12]=Last Created Entity;
 		Create In-World Text
 		(
-			Players Within Radius(Global.ConfigButtsPos[12]+Vector(0,-0.35,0),8,All Teams, Surfaces),
+			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
 			Custom String("placeholder"),
 			Global.ConfigButtsPos[12]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
