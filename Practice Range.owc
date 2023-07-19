@@ -120,6 +120,7 @@ variables
 		17: ConfigButtsEnts
 		25: Numberz_Enable
 		26: InfSupports
+		27: SupportsVoicelines
 		
 	player:
 		1: Tmp
@@ -634,19 +635,20 @@ rule("Configuration – Initialization")
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-/*		
-		"PlaceHolder"
-		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[10], 0.2, Visible To);
+		
+		"SupportsVoicelines"
+		Global.SupportsVoicelines=true;
+		Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[10], 0.2, Visible To);
 		Global.ConfigButtsEnts[10]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[10]+Vector(0,-0.35,0),8,All Teams, Surfaces),
-			Custom String("placeholder"),
+			Custom String("Supports\nVoicelines"),
 			Global.ConfigButtsPos[10]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-		
+/*
 		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[11], 0.2, Visible To);
 		Global.ConfigButtsEnts[11]=Last Created Entity;
@@ -929,6 +931,48 @@ rule("Configuration – ButtonTrigger – Numberz_Enable")
 		else;
 			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[9], 0.2, Visible To);
 			Global.ConfigButtsEnts[9]=Last Created Entity;
+		End;
+	}
+}
+
+rule("Configuration – ButtonTrigger – SupportsVoicelines")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[10]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[10]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[10]) <= 15;
+	}
+	
+	actions
+	{
+		Global.SupportsVoicelines=!Global.SupportsVoicelines;
+		
+		Destroy Effect(Global.ConfigButtsEnts[10]);
+		if (Global.SupportsVoicelines==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[10], 0.2, Visible To);
+			Global.ConfigButtsEnts[10]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[10], 0.2, Visible To);
+			Global.ConfigButtsEnts[10]=Last Created Entity;
 		End;
 	}
 }
@@ -3849,7 +3893,8 @@ rule("Voiceline_Up – Discord")
 
 	conditions
 	{
-		Is Communicating(Event Player, Voice Line Up) == True;
+		Is Communicating(Event Player, Voice Line Up)==true;
+		Global.SupportsVoicelines==true;
 	}
 
 	actions
@@ -3875,7 +3920,8 @@ rule("Voiceline_Left – Nano")
 
 	conditions
 	{
-		Is Communicating(Event Player, Voice Line Left) == True;
+		Is Communicating(Event Player, Voice Line Left)==true;
+		Global.SupportsVoicelines==true;
 	}
 
 	actions
@@ -3897,7 +3943,8 @@ rule("Voiceline_Right – Matrix")
 
 	conditions
 	{
-		Is Communicating(Event Player, Voice Line Right) == True;
+		Is Communicating(Event Player, Voice Line Right)==true;
+		Global.SupportsVoicelines==true;
 	}
 
 	actions
@@ -3919,7 +3966,8 @@ rule("Voiceline_Down – Kitsune")
 
 	conditions
 	{
-		Is Communicating(Event Player, Voice Line Down) == True;
+		Is Communicating(Event Player, Voice Line Down)==true;
+		Global.SupportsVoicelines==true;
 	}
 
 	actions
