@@ -2116,7 +2116,10 @@ rule("Pocket_Mercy")
 		"Cycle"
 		while (Global.PlayerEventInfo[5]!=Null);
 			Wait Until(Is Alive(Event Player)==True, 9999);
-			Wait Until(Is Alive(Global.PlayerEventInfo[5])==True, 9999);
+			if (Is Alive(Global.PlayerEventInfo[5])==False);
+				Wait Until(Is Alive(Global.PlayerEventInfo[5])==True, 9999);
+				Wait(1, Ignore Condition);
+			End;
 			Attach Players(Event Player, Global.PlayerEventInfo[5], Vector(0,-0.25,-1)+Eye Position(Global.PlayerEventInfo[5])-Position Of(Global.PlayerEventInfo[5]));
 			Global.PlayerEventInfo[1]=Hero Of(Global.PlayerEventInfo[5]);
 			Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Position Of(Global.PlayerEventInfo[5])), 1000, To World, Direction and Turn Rate);
@@ -2131,6 +2134,7 @@ rule("Pocket_Mercy")
 		||	Global.PlayerEventInfo[1]!=Hero Of(Global.PlayerEventInfo[5])
 		||	Is Alive(Event Player)==False, 9999
 			);
+			Stop Holding Button(Event Player, Button(Secondary Fire));
 			Stop Facing(Event Player);
 			Detach Players(Event Player);
 
