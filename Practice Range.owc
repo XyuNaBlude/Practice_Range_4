@@ -1014,7 +1014,7 @@ rule("Destroy All Bots")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Global.Buttons[18]) <= 2;
+		Distance Between(Position Of(Event Player), Global.Buttons[18]) <= 3;
 		Is Button Held(Event Player, Button(Interact)) == True;
 	}
 
