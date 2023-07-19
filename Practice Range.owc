@@ -971,6 +971,28 @@ disabled rule("Debug")
 	}
 }
 
+disabled rule("RayCast Tool")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Primary Fire)) == True;
+	}
+
+	actions
+	{
+		Event Player.Tmp = Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player) + Facing Direction Of(Event Player) * 100, Null, Event Player, False);
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Last Of(Event Player.Tmp), 0.2, None);
+		Log To Inspector(Event Player.Tmp);
+	}
+}
+
 rule("Numberz – HUD (Init)")
 {
 	event
