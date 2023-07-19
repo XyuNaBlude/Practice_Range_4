@@ -416,6 +416,12 @@ rule("Buttons, Tooltips")
 		"Destroy All Bots - Button"
 		Global.Buttons[18]=Vector(46.607,3.673,31.369);
 		Create Effect(All Players(All Teams), Sphere, Color(Team 1), Global.Buttons[18], 0.4, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[18],4,All Teams, Surfaces),
+			Custom String("Destroy All Bots"),
+			Global.Buttons[18]+Vector(0,-0.05,0), 1.5, Do Not Clip, Visible To, Color(Red), Default Visibility
+		);
 		
 		"DVa Button"
 		Global.Buttons[19]=Vector(60.735,12.319,13.829);
