@@ -140,6 +140,7 @@ variables
 		25: HealthRegen
 		26: HealthRegen_Timer
 		27: SpeedInfo
+		28: Ruler	//[Enabled, Pos1, Pos2]
 }
 
 rule("Free Ult [Crouch + Interact]")
@@ -218,6 +219,10 @@ rule("Global Variables")
 		Global.Dummies[19]=Null;
 		"Zen_Discord"
 		Global.Dummies[20]=Null;
+		"Ramattra_Falloff"
+		Global.Dummies[21]=Null;
+		"LW_Petal"
+		Global.Dummies[22]=Null;
 		"Widowmaker"
 		Global.Dummies[23]=Null;
 //		"template"
@@ -492,6 +497,53 @@ rule("Buttons, Tooltips")
 			Ability Icon String(Hero(Zenyatta), Button(Ability 2)),
 			Global.Buttons[25]+Vector(0,-0.2,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
 		);
+		
+		"Ramattra_Falloff Button"
+		Global.Buttons[26]=Vector(87.77,0,-7.24);
+		Create Effect(All Players(All Teams), Sphere, Color(Purple), Global.Buttons[26], 0.2, Visible To Position and Radius);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[26]+Vector(0,-0.35,0),6,All Teams, Surfaces),
+			Hero Icon String(Hero(Ramattra)),
+			Global.Buttons[26], 2, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[26]+Vector(0,-0.35,0),5,All Teams, Surfaces),
+			Custom String("Dummy Target"),
+			Global.Buttons[26]+Vector(0,-0.1,0), 1, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Ramattra_Falloff - RidBot Button"
+		Global.Buttons[27]=Vector(88,0+0.06,-7.56);
+		Create Effect(All Players(All Teams), Sphere, Color(Gray), Global.Buttons[27], 0.1, Visible To Position and Radius);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[27]+Vector(0,-0.5,0),3,All Teams, Surfaces),
+			Custom String("Send Vanilla bot\nup to the platform"),
+			Global.Buttons[27]+Vector(0,-0.05,0), 0.75, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+	}
+}
+
+rule("Placing Bots from the Start")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+	
+	actions
+	{
+		"Vanilla bot on Ruler - Removal"
+		Global.Dummies[0]=Array(Vector(92.82,-2,-7.63),10);	// [Position, Duration]
+		Create Dummy Bot(Hero(Lifeweaver), Team 2, -1, Vector(47,20,40), Vector(0,0,0));
+		Global.Dummies[22]=Last Created Entity;
+		Wait(1, Ignore Condition);
+		
+		"Ramattra_Falloff"
+		Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(92.82,-2,-7.63), Vector(-0.59,0,0.81));
+		Global.Dummies[21]=Last Created Entity;
 	}
 }
 
@@ -713,6 +765,14 @@ rule("HUD")
 			Custom String("Speed: {0}m/s ({1}%)",Horizontal Speed Of(Event Player), Event Player.SpeedInfo[0]!=true ? 0 : Round To Integer(Horizontal Speed Of(Event Player)/Event Player.SpeedInfo[1]*100, To Nearest)),	//Optimistaion is needed?
 			Null,Null,
 			Right,Null, Color(Green),Null,Color(Green), Visible To and String, Default Visibility
+		);
+		
+		Create HUD Text
+		(
+			Filtered Array(Event Player, Event Player.Ruler[0]==true && Entity Exists(Event Player.Ruler[1])==true && Entity Exists(Event Player.Ruler[2])==true),
+			Null,Null,
+			Custom String("Distance: {0}m", Event Player.Ruler[0]!=true ? 0 : Distance Between(Eye Position(Event Player.Ruler[1]),Eye Position(Event Player.Ruler[2]))),
+			Right,Null, Color(Orange),Null,Color(Orange), Visible To and String, Default Visibility
 		);
 	}
 }
@@ -1110,6 +1170,8 @@ rule("Destroy All Bots")
 		Play Effect(All Players(All Teams), Ring Explosion, Color(Team 1), Global.Buttons[18], 1);
 		Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[18], 100);
 		Destroy All Dummy Bots;
+		
+		Event Player.Ruler[0]=false;
 	}
 }
 
@@ -3995,6 +4057,195 @@ rule("Zen_Discord")
 		);
 		
 		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
+	}
+}
+
+rule("Ramattra_Falloff Button")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Interact)) == True;
+		Distance Between(Position Of(Event Player), Global.Buttons[26]) <= 5;
+		Distance Between(Global.Buttons[26], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[26]), Null,
+			Event Player, False)) <= 0.2;
+	}
+
+	actions
+	{
+		if ((Global.Dummies[21]==Null) || (Entity Exists(Global.Dummies[21])==false) || (Event Player.Ruler[0]==false));
+			"Button effect"
+			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[26], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[26], 0.75);
+			"Dummy creation"
+			if (Entity Exists(Global.Dummies[21])==true);
+				Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[21]));	//crunch
+			End;
+			Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(92.82,-2,-7.63), Vector(-0.59,0,0.81));
+			Global.Dummies[21]=Last Created Entity;
+			Event Player.Ruler[0]=true;
+			Event Player.Ruler[1]=Event Player;
+			Event Player.Ruler[2]=Global.Dummies[21];
+		else;
+			"Button effect"
+			Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[26], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[26], 0.75);
+			"Dummy destruction"
+			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[21]));
+			Global.Dummies[21]=Null;
+			"Ruler config"
+			Event Player.Ruler[0]=false;
+		End;
+	}
+}
+
+rule("Ramattra_Falloff")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 2;
+		Ramattra;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[21];
+		Is Alive(Event Player)==True;
+	}
+
+	actions
+	{
+		Set Max Health(Event Player, 9999);
+		Set Gravity(Event Player, 500);
+		Heal(Event Player, Null, Max Health(Event Player));
+	}
+}
+
+rule("Ramattra_Falloff - Restore Health")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 2;
+		Ramattra;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[21];
+		Health(Event Player)<200;
+		Is Alive(Event Player)==True;
+	}
+
+	actions
+	{
+		Heal(Event Player, Null, Max Health(Event Player));
+	}
+}
+
+rule("Ramattra_Falloff Dies")
+{
+	event
+	{
+		Player Died;
+		Team 2;
+		Ramattra;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[21];
+	}
+
+	actions
+	{
+		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
+		Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(92.82,-2,-7.63), Vector(-0.59,0,0.81));
+		Global.Dummies[21]=Last Created Entity;
+		Host Player.Ruler[2]=Global.Dummies[21];
+	}
+}
+
+rule("Ramattra_Falloff - RidBot Button")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Interact)) == True;
+		Distance Between(Position Of(Event Player), Global.Buttons[27]) <= 3;
+		Distance Between(Global.Buttons[27], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[27]), Null,
+			Event Player, False)) <= 0.1;
+	}
+
+	actions
+	{
+		"Button effect"
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[27], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Global.Buttons[27], 0.5);
+		
+		"Remove Ram"
+		if (Global.Dummies[21]!=null);
+			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[21]));
+		End;
+		
+		"Remove prev Petal"
+		if (Global.Dummies[22]!=null);
+			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[22]));
+		End;
+		
+		"Dummy configuration/creation"
+		Global.Dummies[0]=Array(Vector(92.82,-2,-7.63),9);	// [Position, Duration]
+		Create Dummy Bot(Hero(Lifeweaver), Team 2, -1, Vector(47,20,40), Vector(0,0,0));
+		Global.Dummies[22]=Last Created Entity;
+		
+		Wait(2, Ignore Condition);	//cd
+	}
+}
+
+rule("LW_Petal")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		Lifeweaver;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[22];
+		Is Alive(Event Player) == True;
+	}
+
+	actions
+	{
+		Event Player.Tmp[0]=12;	//Petal default duration
+		
+		Set Status(Event Player, Null, Phased Out, 999);
+		Start Scaling Player(Event Player, 0.1, True);
+		Start Facing(Event Player, Vector(0,-2,0), 1000, To World, Direction and Turn Rate);
+		Set Ability Cooldown(Event Player, Button(Ability 1),0);
+		Teleport(Event Player, Global.Dummies[0][0]);
+		Press Button(Event Player, Button(Ability 1));
+		Wait(0.1, Ignore Condition);
+		Teleport(Event Player, Vector(47,20,40));
+		Wait(Global.Dummies[0][1] ? Global.Dummies[0][1] : Event Player.Tmp[0], Ignore Condition);
+		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
 	}
 }
 
