@@ -4064,6 +4064,6 @@ rule("Bots Limit")
 
 	actions
 	{
-		Big Message(All Players(All Teams), Custom String("Warning! Bots Limit is Reached."));
+		Big Message(All Players(All Teams), Custom String("Warning! Bots Limit is Reached!"));
 	}
 }
