@@ -3166,6 +3166,7 @@ rule("Kiriko_Rush")
 
 	actions
 	{
+		Start Scaling Player(Event Player, 0.1, True);
 		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0]), 1000, To World, Direction and Turn Rate);
 		Wait(0.050, Ignore Condition);
 		Set Ultimate Charge(Event Player, 100);
