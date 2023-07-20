@@ -4234,8 +4234,9 @@ rule("LW_Petal")
 
 	actions
 	{
-		Event Player.Tmp[0]=12;	//Petal default duration
+		Event Player.Tmp[0]=12-1;	//Petal default duration
 		
+		Start Forcing Dummy Bot Name(Event Player, Custom String("LW_Petal"));
 		Set Status(Event Player, Null, Phased Out, 999);
 		Start Scaling Player(Event Player, 0.1, True);
 		Start Facing(Event Player, Vector(0,-2,0), 1000, To World, Direction and Turn Rate);
@@ -4245,7 +4246,7 @@ rule("LW_Petal")
 		Wait(0.1, Ignore Condition);
 		Teleport(Event Player, Vector(47,20,40));
 		Wait(Global.Dummies[0][1] ? Global.Dummies[0][1] : Event Player.Tmp[0], Ignore Condition);
-		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
+		Destroy Dummy Bot(Team Of(Event Player), Slot Of(Event Player));
 	}
 }
 
@@ -4383,6 +4384,29 @@ rule("Ultimate Support")
 			Wait(1.0, Ignore Condition);
 			Small Message(Event Player, Custom String("Go Hero!"));
 		End;
+	}
+}
+
+rule("Call for LW_Petal")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Communicating(Event Player, Going In) == True;
+	}
+
+	actions
+	{
+		Global.PlayerEventInfo[0] = Event Player;
+		Global.Dummies[0]=Array(Position Of(Event Player));
+		Create Dummy Bot(Hero(Lifeweaver), Team 1, -1, Vector(47,20,40), Vector(0,0,0));
+		Global.Dummies[22]=Last Created Entity;
 	}
 }
 
