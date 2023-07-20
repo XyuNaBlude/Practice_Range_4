@@ -125,6 +125,7 @@ variables
 	player:
 		1: Tmp
 		2: Rnd
+		3: PlayerInfo	//[..., Hero]
 		11: Numz_DamageTooltipPos
 		12: Numz_DamageReceivedLast
 		13: Numz_DamageLastTimer
@@ -138,6 +139,7 @@ variables
 		24: InfUlt
 		25: HealthRegen
 		26: HealthRegen_Timer
+		27: SpeedInfo
 }
 
 rule("Free Ult [Crouch + Interact]")
@@ -655,19 +657,19 @@ rule("Configuration – Initialization")
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-/*
-		"PlaceHolder"
+
+		"Speed Info"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[11], 0.2, Visible To);
 		Global.ConfigButtsEnts[11]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
-			Custom String("placeholder"),
-			Global.ConfigButtsPos[11]+Vector(0,-0.35,0),
+			Custom String("  Player's\nSpeed Info"),
+			Global.ConfigButtsPos[11]+Vector(0,-0.35-0.075,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-		
+/*
 		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[12], 0.2, Visible To);
 		Global.ConfigButtsEnts[12]=Last Created Entity;
@@ -680,6 +682,64 @@ rule("Configuration – Initialization")
 			Color(White), Default Visibility
 		);
 */
+	}
+}
+
+rule("HUD")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	actions
+	{
+		
+		disabled Create HUD Text
+		(
+			Event Player, Hero Icon String(Hero Of(Event Player)),
+			String("{0} {1} {2}", Custom String("Press 'Interact' with buttons around the map to activate/deactivate bots"), Custom String("Some Bots dont deactivate, so a button in spawn will destroy them"), Custom String("'Crouch'+'Interact' for 'ult', Have Fun")),
+			Null, Left, 0, Color(White), Color(White), Color(White), Visible To and String,
+			Default Visibility
+		);
+		
+		Create HUD Text
+		(
+			Filtered Array(Event Player, Event Player.SpeedInfo[0]==true),
+			Custom String("Speed: {0}m/s ({1}%)",Horizontal Speed Of(Event Player), Event Player.SpeedInfo[0]!=true ? 0 : Round To Integer(Horizontal Speed Of(Event Player)/Event Player.SpeedInfo[1]*100, To Nearest)),	//Optimistaion is needed?
+			Null,Null,
+			Right,Null, Color(Green),Null,Color(Green), Visible To and String, Default Visibility
+		);
+	}
+}
+
+rule("PlayerInfo Update")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		Hero Of(Event Player)!=Event Player.PlayerInfo[1];
+	}
+	
+	actions
+	{
+		"Hero"
+		Event Player.PlayerInfo[1]=Hero Of(Event Player);
+		
+		"Max Speed"
+		if (Array Contains(Array(Hero(Genji),Hero(Tracer)), Hero Of(Event Player))==true);
+			Event Player.SpeedInfo[1]=6;
+		else;
+			Event Player.SpeedInfo[1]=5.5;
+		End;
 	}
 }
 
@@ -984,22 +1044,45 @@ rule("Configuration – ButtonTrigger – SupportsVoicelines")
 	}
 }
 
-disabled rule("Hud")
+rule("Configuration – ButtonTrigger – Speed Info")
 {
 	event
 	{
 		Ongoing - Each Player;
-		All;
+		Team 1;
 		All;
 	}
-
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[11]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[11]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[11]) <= 15;
+	}
+	
 	actions
 	{
-		Create HUD Text(Event Player, Hero Icon String(Hero Of(Event Player)), String("{0} {1} {2}", Custom String(
-			"Press 'Interact' with buttons around the map to activate/deactivate bots"), Custom String(
-			"Some Bots dont deactivate, so a button in spawn will destroy them"), Custom String(
-			"'Crouch'+'Interact' for 'ult', Have Fun")), Null, Left, 0, Color(White), Color(White), Color(White), Visible To and String,
-			Default Visibility);
+		Event Player.SpeedInfo[0]=!Event Player.SpeedInfo[0];
+		
+		Destroy Effect(Global.ConfigButtsEnts[11]);
+		if (Event Player.SpeedInfo[0]==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[11], 0.2, Visible To);
+			Global.ConfigButtsEnts[11]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[11], 0.2, Visible To);
+			Global.ConfigButtsEnts[11]=Last Created Entity;
+		End;
 	}
 }
 
