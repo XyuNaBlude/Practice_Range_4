@@ -172,7 +172,7 @@ rule("Global Variables")
 
 	actions
 	{
-		"Widowmaker"
+		"Task Details"
 		Global.Dummies[0]=Null;
 		"Symmetra"
 		Global.Dummies[1]=Null;
@@ -218,6 +218,8 @@ rule("Global Variables")
 		Global.Dummies[19]=Null;
 		"Zen_Discord"
 		Global.Dummies[20]=Null;
+		"Widowmaker"
+		Global.Dummies[23]=Null;
 //		"template"
 //		Global.Dummies[999]=Null;
 
@@ -1599,20 +1601,20 @@ rule("Widow Button")
 
 	actions
 	{
-		if ((Global.Dummies[0]==Null) || (Entity Exists(Global.Dummies[0])==false));
+		if ((Global.Dummies[23]==Null) || (Entity Exists(Global.Dummies[23])==false));
 			"Button effect"
 			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[7], 100);
 			Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[7], 1);
 			"Dummy creation"
 			Create Dummy Bot(Hero(Widowmaker), Team 2, -1, Vector(51.237, 1.486, 14.057), Vector(0.290, 0.880, -0.380));
-			Global.Dummies[0]=Last Created Entity;
+			Global.Dummies[23]=Last Created Entity;
 		else;
 			"Button effect"
 			Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[7], 100);
 			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[7], 1);
 			"Dummy destruction"
-			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[0]));
-			Global.Dummies[0]=Null;
+			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[23]));
+			Global.Dummies[23]=Null;
 		End;
 	}
 }
@@ -2564,7 +2566,7 @@ rule("Widow Bot Movement")
 	
 	conditions
 	{
-		Event Player == Global.Dummies[0];
+		Event Player == Global.Dummies[23];
 		Is Alive(Event Player) == True;
 	}
 
@@ -2595,14 +2597,14 @@ rule("Widow Bot Dies")
 	
 	conditions
 	{
-		Event Player == Global.Dummies[0];
+		Event Player == Global.Dummies[23];
 	}
 
 	actions
 	{
 		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
 		Create Dummy Bot(Hero(Widowmaker), Team 2, -1, Vector(51.237, 1.486, 14.057), Vector(0.290, 0.880, -0.380));
-		Global.Dummies[0]=Last Created Entity;
+		Global.Dummies[23]=Last Created Entity;
 	}
 }
 
@@ -3091,7 +3093,7 @@ rule("Friendly Pharah Bot Health")
 
 	actions
 	{
-		Set Max Health(Event Player, 1000);
+		Set Max Health(Event Player, 9999);
 		disabled Set Healing Received(Event Player, 0.010);
 		Wait(0.050, Ignore Condition);
 		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Closest Player To(Vector(61.797, 0.475,
