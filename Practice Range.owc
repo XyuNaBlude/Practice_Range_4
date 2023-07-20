@@ -3857,7 +3857,7 @@ rule("Zen_Discord")
 			Event Player.Tmp=0;
 			while ((Is Using Ability 2(Event Player)==false) && (Event Player.Tmp<7) && (Is Alive(Event Player)==true));
 				Event Player.Tmp+=1;
-				Start Forcing Player Position(Event Player, Position Of(Event Player)+Facing Direction Of(Event Player)*5, False);
+				Start Forcing Player Position(Event Player, Position Of(Event Player)+Facing Direction Of(Event Player)*10, False);
 				Wait(0.25, Ignore Condition);
 				Press Button(Event Player, Button(Ability 2));
 				Wait Until(Is Using Ability 2(Event Player)==true, 1);
