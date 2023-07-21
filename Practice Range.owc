@@ -1811,9 +1811,12 @@ rule("Pharah Button")
 				Create Dummy Bot(Hero(Pharah), Team 2, -1, Vector(84.571, 0.076, 7.529), Vector(-0.600, 0, 0.800));
 			else;	//Global.BotToggles[2]==1
 				"Friendly Pharah"
-				Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[7]));
-				Global.Dummies[7]=Null;
+				if (Entity Exists(Global.Dummies[7])==true);
+					Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[7]));
+					Global.Dummies[7]=Null;
+				End;
 				Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[2]));
+				Global.Dummies[2]=Null;
 				Create Dummy Bot(Hero(Pharah), Team 1, -1, Vector(84.571, 0.076, 7.529), Vector(-0.600, 0, 0.800));
 			End;
 			"Saving Last Created Pharah's Entity info"
@@ -1931,9 +1934,9 @@ rule("Roadhog_HealingTest Button")
 	actions
 	{
 		"Remove Enemy Hog if it exists"
-		if ((Global.Dummies[11]!=Null) && (Entity Exists(Global.Dummies[11])==true));
-			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[11]));
-			Global.Dummies[11]=Null;
+		if ((Global.Dummies[4]!=Null) && (Entity Exists(Global.Dummies[4])==true));
+			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[4]));
+			Global.Dummies[4]=Null;
 		End;
 		
 		if ((Global.Dummies[24]==Null) || (Entity Exists(Global.Dummies[24])==false));
@@ -4404,11 +4407,13 @@ rule("Ramattra_Falloff - RidBot Button")
 		"Remove Ram"
 		if (Global.Dummies[21]!=null);
 			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[21]));
+			Global.Dummies[21]=null;
 		End;
 		
 		"Remove prev Petal"
 		if (Global.Dummies[22]!=null);
 			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[22]));
+			Global.Dummies[22]=null;
 		End;
 		
 		"Dummy configuration/creation"
@@ -4450,6 +4455,7 @@ rule("LW_Petal")
 		Teleport(Event Player, Vector(47,20,40));
 		Wait(Global.Dummies[0][1] ? Global.Dummies[0][1] : Event Player.Tmp[0], Ignore Condition);
 		Destroy Dummy Bot(Team Of(Event Player), Slot Of(Event Player));
+		Global.Dummies[22]=null;
 	}
 }
 
