@@ -3187,7 +3187,7 @@ rule("Lucio Bot Out of Bounds")
 	}
 }
 
-rule("Friendly Pharah Bot Health")
+rule("Friendly Pharah Bot")
 {
 	event
 	{
@@ -3205,10 +3205,29 @@ rule("Friendly Pharah Bot Health")
 	actions
 	{
 		Set Max Health(Event Player, 9999);
-		disabled Set Healing Received(Event Player, 0.010);
-		Wait(0.050, Ignore Condition);
 		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Closest Player To(Vector(61.797, 0.475,
 			28.245), Team 1))), 800, To World, Direction and Turn Rate);
+		Damage(Event Player, Null, Health(Event Player) - 1);
+	}
+}
+
+rule("Friendly Pharah Bot - Health reset")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Pharah;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[2];
+		Health(Event Player)>=Max Health(Event Player);
+	}
+
+	actions
+	{
 		Damage(Event Player, Null, Health(Event Player) - 1);
 	}
 }
