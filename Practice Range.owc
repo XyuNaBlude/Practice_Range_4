@@ -184,7 +184,7 @@ rule("Global Variables")
 		"Reaper"
 		Global.Dummies[3]=Null;
 		Global.BotToggles[3] = 0;	//(0 off, 1 with wraith, 2 without wraith)
-		"Roadhog"
+		"Roadhog_DamgeTest"
 		Global.Dummies[4]=Null;
 		"Tracer"
 		Global.Dummies[5]=Null;
@@ -226,6 +226,8 @@ rule("Global Variables")
 		Global.Dummies[22]=Null;
 		"Widowmaker"
 		Global.Dummies[23]=Null;
+		"Roadhog_HealingTest"
+		Global.Dummies[24]=Null;
 //		"template"
 //		Global.Dummies[999]=Null;
 
@@ -350,9 +352,9 @@ rule("Buttons, Tooltips")
 			Global.Buttons[10]+Vector(0,-0.1,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
 		);
 		
-		"Roadhog Button"
-		Global.Buttons[11]=Vector(85.002,8.413,-5.243);
-		Create Effect(All Players(All Teams), Sphere, Color(White), Global.Buttons[11], 0.3, Visible To);
+		"Roadhog_DamgeTest Button"
+		Global.Buttons[11]=Vector(85.002,9,-5.243);
+		Create Effect(All Players(All Teams), Sphere, Color(Team 2), Global.Buttons[11], 0.3, Visible To);
 		Create In-World Text
 		(
 			Players Within Radius(Global.Buttons[11],5,All Teams, Surfaces),
@@ -523,6 +525,16 @@ rule("Buttons, Tooltips")
 			Players Within Radius(Global.Buttons[27]+Vector(0,-0.5,0),3,All Teams, Surfaces),
 			Custom String("Send Vanilla bot\nup to the platform"),
 			Global.Buttons[27]+Vector(0,-0.05,0), 0.75, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Roadhog_HealingTest Button"
+		Global.Buttons[28]=Vector(85.002,8,-5.243);
+		Create Effect(All Players(All Teams), Sphere, Color(Team 1), Global.Buttons[28], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[28],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Roadhog)),
+			Global.Buttons[28]+Vector(0,-0.05,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
 		);
 	}
 }
@@ -1854,7 +1866,7 @@ rule("Reaper Button")
 	}
 }
 
-rule("Roadhog Button")
+rule("Roadhog_DamgeTest Button")
 {
 	event
 	{
@@ -1865,12 +1877,21 @@ rule("Roadhog Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(85.002, 8.414, -5.243)) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
+		Distance Between(Position Of(Event Player), Global.Buttons[11]) <= 4;
+		Distance Between(Global.Buttons[11], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[11]), Null,
+			Event Player, False)) <= 0.3;
 	}
 
 	actions
 	{
+		"Remove Friendly Hog if it exists"
+		if ((Global.Dummies[24]!=Null) && (Entity Exists(Global.Dummies[24])==true));
+			Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[24]));
+			Global.Dummies[24]=Null;
+		End;
+		
 		if ((Global.Dummies[4]==Null) || (Entity Exists(Global.Dummies[4])==false));
 			"Button effect"
 			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[11], 100);
@@ -1886,6 +1907,117 @@ rule("Roadhog Button")
 			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[4]));
 			Global.Dummies[4]=Null;
 		End;
+	}
+}
+
+rule("Roadhog_HealingTest Button")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Interact)) == True;
+		Distance Between(Position Of(Event Player), Global.Buttons[28]) <= 4;
+		Distance Between(Global.Buttons[28], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[28]), Null,
+			Event Player, False)) <= 0.3;
+	}
+
+	actions
+	{
+		"Remove Enemy Hog if it exists"
+		if ((Global.Dummies[11]!=Null) && (Entity Exists(Global.Dummies[11])==true));
+			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[11]));
+			Global.Dummies[11]=Null;
+		End;
+		
+		if ((Global.Dummies[24]==Null) || (Entity Exists(Global.Dummies[24])==false));
+			"Button effect"
+			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[28], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[28], 1);
+			"Dummy creation"
+			Create Dummy Bot(Hero(Roadhog), Team 1, -1, Vector(79.684, 8.674, -5.637), Vector(-0.600, 0, 0.800));
+			Global.Dummies[24]=Last Created Entity;
+		else;
+			"Button effect"
+			Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[28], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[28], 1);
+			"Dummy destruction"
+			Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[24]));
+			Global.Dummies[24]=Null;
+		End;
+	}
+}
+
+rule("Roadhog_HealingTest Bot - Setup")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Roadhog;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[24];
+		Is Alive(Event Player) == True;
+	}
+	
+	actions
+	{
+		Set Gravity(Event Player, 500);
+		Set Max Health(Event Player, 9999);
+		Damage(Event Player, Null, Health(Event Player) - 1);
+	}
+}
+
+rule("Roadhog_HealingTest Bot Health reset")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Roadhog;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[24];
+		Health(Event Player)>=Max Health(Event Player);
+	}
+	
+	actions
+	{
+		Damage(Event Player, Null, Health(Event Player) - 1);
+	}
+}
+
+rule("Roadhog_HealingTest Dies")
+{
+	event
+	{
+		Player Died;
+		Team 1;
+		Roadhog;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[24];
+	}
+
+	actions
+	{
+		Wait(0.25, Ignore Condition);	//Delay to see kill-credit
+		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
+		Create Dummy Bot(Hero(Roadhog), Team 1, -1, Vector(79.684, 8.674, -5.637), Vector(-0.600, 0, 0.800));
+		Global.Dummies[24]=Last Created Entity;
 	}
 }
 
@@ -2719,7 +2851,7 @@ rule("Widow Bot Dies")
 	}
 }
 
-rule("Roadhog Bot Health")
+rule("Roadhog_DamgeTest Bot Health")
 {
 	event
 	{
@@ -2743,7 +2875,7 @@ rule("Roadhog Bot Health")
 	}
 }
 
-rule("Roadhog Bot Timer")
+rule("Roadhog_DamgeTest Bot Timer")
 {
 	event
 	{
@@ -2787,7 +2919,7 @@ rule("Roadhog Bot Timer")
 	}
 }
 
-rule("Roadhog Bot Dies")
+rule("Roadhog_DamgeTest Bot Dies")
 {
 	event
 	{
