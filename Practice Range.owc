@@ -141,6 +141,7 @@ variables
 		26: HealthRegen_Timer
 		27: SpeedInfo
 		28: Ruler	//[Enabled, Pos1, Pos2]
+		29: Immortality
 }
 
 rule("Free Ult [Crouch + Interact]")
@@ -609,19 +610,19 @@ rule("Configuration – Initialization")
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-		
-		"Invincibility"
+/*
+		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[3], 0.2, Visible To);
 		Global.ConfigButtsEnts[3]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
-			Custom String("Invincibility"),
+			Custom String("placeholder"),
 			Global.ConfigButtsPos[3]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-		
+*/
 		"Inf Ultimate Duration"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[4], 0.2, Visible To);
 		Global.ConfigButtsEnts[4]=Last Created Entity;
@@ -647,31 +648,31 @@ rule("Configuration – Initialization")
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-/*
-		"PlaceHolder"
+
+		"Immortality"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[6], 0.2, Visible To);
 		Global.ConfigButtsEnts[6]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
-			Custom String("placeholder"),
+			Custom String("Immortality"),
 			Global.ConfigButtsPos[6]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
 
-		"PlaceHolder"
+		"Invincibility"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[7], 0.2, Visible To);
 		Global.ConfigButtsEnts[7]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
-			Custom String("placeholder"),
+			Custom String("Invincibility"),
 			Global.ConfigButtsPos[7]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-		
+/*		
 		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[8], 0.2, Visible To);
 		Global.ConfigButtsEnts[8]=Last Created Entity;
@@ -910,24 +911,24 @@ rule("Configuration – ButtonTrigger – Invincibility")
 		Distance Between
 		(
 			Ray Cast Hit Position(Eye Position(Event Player),
-			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[3]),
-			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[3]
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[7]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[7]
 		) <= 0.2;
 		
-		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[3]) <= 15;
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[7]) <= 15;
 	}
 	
 	actions
 	{
 		Event Player.Invincibility=!Event Player.Invincibility;
 		
-		Destroy Effect(Global.ConfigButtsEnts[3]);
+		Destroy Effect(Global.ConfigButtsEnts[7]);
 		if (Event Player.Invincibility==true);
-			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[3], 0.2, Visible To);
-			Global.ConfigButtsEnts[3]=Last Created Entity;
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[7], 0.2, Visible To);
+			Global.ConfigButtsEnts[7]=Last Created Entity;
 		else;
-			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[3], 0.2, Visible To);
-			Global.ConfigButtsEnts[3]=Last Created Entity;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[7], 0.2, Visible To);
+			Global.ConfigButtsEnts[7]=Last Created Entity;
 		End;
 		
 		if (Event Player.Invincibility==true);
@@ -1018,6 +1019,54 @@ rule("Configuration – ButtonTrigger – HealthRegen")
 		else;
 			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[5], 0.2, Visible To);
 			Global.ConfigButtsEnts[5]=Last Created Entity;
+		End;
+	}
+}
+
+rule("Configuration – ButtonTrigger – Immortality")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+	
+	conditions
+	{
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+	||	Is Button Held(Event Player,Button(Interact))==True
+		)	== True;
+		
+		Distance Between
+		(
+			Ray Cast Hit Position(Eye Position(Event Player),
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[6]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[6]
+		) <= 0.2;
+		
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[6]) <= 15;
+	}
+	
+	actions
+	{
+		Event Player.Immortality=!Event Player.Immortality;
+		
+		Destroy Effect(Global.ConfigButtsEnts[6]);
+		if (Event Player.Immortality==true);
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[6], 0.2, Visible To);
+			Global.ConfigButtsEnts[6]=Last Created Entity;
+		else;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[6], 0.2, Visible To);
+			Global.ConfigButtsEnts[6]=Last Created Entity;
+		End;
+		
+		if (Event Player.Immortality==true);
+			Set Status(Event Player, Null, Unkillable, 9999);
+		else;
+			Clear Status(Event Player, Unkillable);
 		End;
 	}
 }
@@ -3341,7 +3390,6 @@ rule("Kiriko_Rush")
 
 	actions
 	{
-		Start Scaling Player(Event Player, 0.1, True);
 		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0]), 1000, To World, Direction and Turn Rate);
 		Wait(0.050, Ignore Condition);
 		Set Ultimate Charge(Event Player, 100);
