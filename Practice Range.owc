@@ -2307,13 +2307,14 @@ rule("Baptiste_Matrix")
 
 	actions
 	{
-		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0])+Vector(0,-0.25,0), 1000, To World, Direction and Turn Rate);
+		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0])+Vector(0,-0.187,0), 1000, To World, Direction and Turn Rate);
 		Set Ultimate Charge(Event Player, 100);
+		Set Gravity(Event Player, 0);
 		Set Status(Event Player, Null, Phased Out, 5);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0])+Vector(0,0,-1));
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0])+Facing Direction Of(Global.PlayerEventInfo[0])*(-1));
 		Wait(0.1, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
-		Wait(0.050, Ignore Condition);
+		Wait(0.05, Ignore Condition);
 		Press Button(Event Player, Button(Primary Fire));
 		Wait(0.1, Ignore Condition);
 		Set Status(Event Player, Null, Hacked, 3);
@@ -2341,15 +2342,14 @@ rule("Ana_Nano Boost")
 
 	actions
 	{
-		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo[0])), 5100, To World, Direction and Turn Rate);
-		Wait(0.050, Ignore Condition);
-		Set Ultimate Charge(Event Player, 100);
-		Wait(0.250, Ignore Condition);
+		Start Scaling Player(Event Player, 0.1, True);
 		Set Status(Event Player, Null, Phased Out, 5);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0])+Vector(0,0,-1));
-		Wait(0.25, Ignore Condition);
+		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo[0])), 5100, To World, Direction and Turn Rate);
+		Set Ultimate Charge(Event Player, 100);
+		Attach Players(Event Player, Global.PlayerEventInfo[0], Vector(0,1,1)+Position Of(Global.PlayerEventInfo[0]-Position Of(Global.PlayerEventInfo[0])));
+		Wait(0.1, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
-		Wait(0.25, Ignore Condition);
+		Wait(0.15, Ignore Condition);	//0.13 minimum
 		Set Status(Event Player, Null, Hacked, 1);
 		Teleport(Event Player, Vector(47,20,40));
 		Wait(8.5-0.25, Ignore Condition);
@@ -3390,12 +3390,15 @@ rule("Kiriko_Rush")
 
 	actions
 	{
-		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0]), 1000, To World, Direction and Turn Rate);
-		Wait(0.050, Ignore Condition);
+		Event Player.Tmp=Facing Direction Of(Global.PlayerEventInfo[0]);
+
+		Start Scaling Player(Event Player, 0.1, True);
+		Set Gravity(Event Player, 0);
+		Start Facing(Event Player, Event Player.Tmp, 1000, To World, Direction and Turn Rate);
 		Set Ultimate Charge(Event Player, 100);
-		Wait(0.250, Ignore Condition);
 		Set Status(Event Player, Null, Phased Out, 5);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0]));
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0])+Event Player.Tmp*(-3)+Vector(0,2,0));
+		Wait(0.1, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
 		Wait(0.75, Ignore Condition);
 		Set Status(Event Player, Null, Hacked, 1);
