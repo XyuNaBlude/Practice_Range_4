@@ -628,31 +628,31 @@ rule("Configuration – Initialization")
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-/*
-		"PlaceHolder"
+
+		"Inf Ultimate Duration"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[3], 0.2, Visible To);
 		Global.ConfigButtsEnts[3]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
-			Custom String("placeholder"),
+			Custom String("Inf Ult duration*"),
 			Global.ConfigButtsPos[3]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-*/
-		"Inf Ultimate Duration"
+/*
+		"PlaceHolder"
 		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[4], 0.2, Visible To);
 		Global.ConfigButtsEnts[4]=Last Created Entity;
 		Create In-World Text
 		(
 			Players Within Radius(Global.ConfigButtsPos[0],8,All Teams, Surfaces),
-			Custom String("Inf Ult duration*"),
+			Custom String("placeHolder"),
 			Global.ConfigButtsPos[4]+Vector(0,-0.35,0),
 			1, Do Not Clip,	Visible To,
 			Color(White), Default Visibility
 		);
-		
+*/
 		
 		"2nd column\n"
 		"HealthRegen"
@@ -991,24 +991,24 @@ rule("Configuration – ButtonTrigger – InfUlt")
 		Distance Between
 		(
 			Ray Cast Hit Position(Eye Position(Event Player),
-			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[4]),
-			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[4]
+			Eye Position(Event Player) + Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.ConfigButtsPos[3]),
+			All Players(All Teams), Event Player, True), Global.ConfigButtsPos[3]
 		) <= 0.2;
 		
-		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[4]) <= 15;
+		Distance Between(Position Of(Event Player), Global.ConfigButtsPos[3]) <= 15;
 	}
 	
 	actions
 	{
 		Event Player.InfUlt=!Event Player.InfUlt;
 		
-		Destroy Effect(Global.ConfigButtsEnts[4]);
+		Destroy Effect(Global.ConfigButtsEnts[3]);
 		if (Event Player.InfUlt==true);
-			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[4], 0.2, Visible To);
-			Global.ConfigButtsEnts[4]=Last Created Entity;
+			Create Effect(All Players(All Teams), Sphere, Color(Green), Global.ConfigButtsPos[3], 0.2, Visible To);
+			Global.ConfigButtsEnts[3]=Last Created Entity;
 		else;
-			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[4], 0.2, Visible To);
-			Global.ConfigButtsEnts[4]=Last Created Entity;
+			Create Effect(All Players(All Teams), Sphere, Color(Red), Global.ConfigButtsPos[3], 0.2, Visible To);
+			Global.ConfigButtsEnts[3]=Last Created Entity;
 		End;
 	}
 }
