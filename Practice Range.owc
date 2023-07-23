@@ -87,6 +87,12 @@ settings
 		{
 			Spawn With Ultimate Ready: On
 
+			Moira
+			{
+				Biotic Energy Maximum: 500%
+				Biotic Energy Recharge Rate: 500%
+			}
+
 			Pharah
 			{
 				Hover Jets Unlimited Fuel: On
