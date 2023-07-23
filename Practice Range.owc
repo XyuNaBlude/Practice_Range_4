@@ -87,6 +87,12 @@ settings
 		{
 			Spawn With Ultimate Ready: On
 
+			Moira
+			{
+				Biotic Energy Maximum: 500%
+				Biotic Energy Recharge Rate: 500%
+			}
+
 			Pharah
 			{
 				Hover Jets Unlimited Fuel: On
@@ -184,7 +190,7 @@ rule("Global Variables")
 		"Reaper"
 		Global.Dummies[3]=Null;
 		Global.BotToggles[3] = 0;	//(0 off, 1 with wraith, 2 without wraith)
-		"Roadhog"
+		"Roadhog_DamgeTest"
 		Global.Dummies[4]=Null;
 		"Tracer"
 		Global.Dummies[5]=Null;
@@ -226,6 +232,8 @@ rule("Global Variables")
 		Global.Dummies[22]=Null;
 		"Widowmaker"
 		Global.Dummies[23]=Null;
+		"Roadhog_HealingTest"
+		Global.Dummies[24]=Null;
 //		"template"
 //		Global.Dummies[999]=Null;
 
@@ -350,9 +358,9 @@ rule("Buttons, Tooltips")
 			Global.Buttons[10]+Vector(0,-0.1,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
 		);
 		
-		"Roadhog Button"
-		Global.Buttons[11]=Vector(85.002,8.413,-5.243);
-		Create Effect(All Players(All Teams), Sphere, Color(White), Global.Buttons[11], 0.3, Visible To);
+		"Roadhog_DamgeTest Button"
+		Global.Buttons[11]=Vector(85.002,9,-5.243);
+		Create Effect(All Players(All Teams), Sphere, Color(Team 2), Global.Buttons[11], 0.3, Visible To);
 		Create In-World Text
 		(
 			Players Within Radius(Global.Buttons[11],5,All Teams, Surfaces),
@@ -523,6 +531,16 @@ rule("Buttons, Tooltips")
 			Players Within Radius(Global.Buttons[27]+Vector(0,-0.5,0),3,All Teams, Surfaces),
 			Custom String("Send Vanilla bot\nup to the platform"),
 			Global.Buttons[27]+Vector(0,-0.05,0), 0.75, Do Not Clip, Visible To, Color(White), Default Visibility
+		);
+		
+		"Roadhog_HealingTest Button"
+		Global.Buttons[28]=Vector(85.002,8,-5.243);
+		Create Effect(All Players(All Teams), Sphere, Color(Team 1), Global.Buttons[28], 0.3, Visible To);
+		Create In-World Text
+		(
+			Players Within Radius(Global.Buttons[28],5,All Teams, Surfaces),
+			Hero Icon String(Hero(Roadhog)),
+			Global.Buttons[28]+Vector(0,-0.05,0), 2, Do Not Clip, Visible To, Color(White), Default Visibility
 		);
 	}
 }
@@ -838,9 +856,9 @@ rule("Configuration – ButtonTrigger – NoCooldowns")
 		Big Message(Event Player, Custom String(".!. ''Blizzard Quality Experience'' .!."));
 		Small Message(Event Player, Custom String("not gonna work"));
 		Wait(2, Ignore Condition);
-		Small Message(Event Player, Custom String("But you can change it in Lobby Settings / Heroes / General / Ability Cooldown Time.  Then restart the Match :)"));
+		Small Message(Event Player, Custom String("But you can change it in Lobby Settings / Heroes / General / Ability Cooldown Time.  Then restart the Match"));
 		Wait(2.9, Ignore Condition);
-		Small Message(Event Player, Custom String("But you can change it in Lobby Settings / Heroes / General / Ability Cooldown Time.  Then restart the Match :)"));
+		Small Message(Event Player, Custom String("But you can change it in Lobby Settings / Heroes / General / Ability Cooldown Time.  Then restart the Match"));
 		Wait(2.9, Ignore Condition);
 		Small Message(Event Player, Custom String("But you can change it in Lobby Settings / Heroes / General / Ability Cooldown Time.  Then restart the Match :)"));
 		Wait(5, Ignore Condition);
@@ -1799,9 +1817,12 @@ rule("Pharah Button")
 				Create Dummy Bot(Hero(Pharah), Team 2, -1, Vector(84.571, 0.076, 7.529), Vector(-0.600, 0, 0.800));
 			else;	//Global.BotToggles[2]==1
 				"Friendly Pharah"
-				Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[7]));
-				Global.Dummies[7]=Null;
+				if (Entity Exists(Global.Dummies[7])==true);
+					Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[7]));
+					Global.Dummies[7]=Null;
+				End;
 				Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[2]));
+				Global.Dummies[2]=Null;
 				Create Dummy Bot(Hero(Pharah), Team 1, -1, Vector(84.571, 0.076, 7.529), Vector(-0.600, 0, 0.800));
 			End;
 			"Saving Last Created Pharah's Entity info"
@@ -1854,7 +1875,7 @@ rule("Reaper Button")
 	}
 }
 
-rule("Roadhog Button")
+rule("Roadhog_DamgeTest Button")
 {
 	event
 	{
@@ -1865,12 +1886,21 @@ rule("Roadhog Button")
 
 	conditions
 	{
-		Distance Between(Position Of(Event Player), Vector(85.002, 8.414, -5.243)) <= 2;
 		Is Button Held(Event Player, Button(Interact)) == True;
+		Distance Between(Position Of(Event Player), Global.Buttons[11]) <= 4;
+		Distance Between(Global.Buttons[11], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[11]), Null,
+			Event Player, False)) <= 0.3;
 	}
 
 	actions
 	{
+		"Remove Friendly Hog if it exists"
+		if ((Global.Dummies[24]!=Null) && (Entity Exists(Global.Dummies[24])==true));
+			Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[24]));
+			Global.Dummies[24]=Null;
+		End;
+		
 		if ((Global.Dummies[4]==Null) || (Entity Exists(Global.Dummies[4])==false));
 			"Button effect"
 			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[11], 100);
@@ -1886,6 +1916,117 @@ rule("Roadhog Button")
 			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[4]));
 			Global.Dummies[4]=Null;
 		End;
+	}
+}
+
+rule("Roadhog_HealingTest Button")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Interact)) == True;
+		Distance Between(Position Of(Event Player), Global.Buttons[28]) <= 4;
+		Distance Between(Global.Buttons[28], Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player)
+			+ Facing Direction Of(Event Player) * Distance Between(Eye Position(Event Player), Global.Buttons[28]), Null,
+			Event Player, False)) <= 0.3;
+	}
+
+	actions
+	{
+		"Remove Enemy Hog if it exists"
+		if ((Global.Dummies[4]!=Null) && (Entity Exists(Global.Dummies[4])==true));
+			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[4]));
+			Global.Dummies[4]=Null;
+		End;
+		
+		if ((Global.Dummies[24]==Null) || (Entity Exists(Global.Dummies[24])==false));
+			"Button effect"
+			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[28], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[28], 1);
+			"Dummy creation"
+			Create Dummy Bot(Hero(Roadhog), Team 1, -1, Vector(79.684, 8.674, -5.637), Vector(-0.600, 0, 0.800));
+			Global.Dummies[24]=Last Created Entity;
+		else;
+			"Button effect"
+			Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[28], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[28], 1);
+			"Dummy destruction"
+			Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[24]));
+			Global.Dummies[24]=Null;
+		End;
+	}
+}
+
+rule("Roadhog_HealingTest Bot - Setup")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Roadhog;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[24];
+		Is Alive(Event Player) == True;
+	}
+	
+	actions
+	{
+		Set Gravity(Event Player, 500);
+		Set Max Health(Event Player, 9999);
+		Damage(Event Player, Null, Health(Event Player) - 1);
+	}
+}
+
+rule("Roadhog_HealingTest Bot Health reset")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Roadhog;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[24];
+		Health(Event Player)>=Max Health(Event Player);
+	}
+	
+	actions
+	{
+		Damage(Event Player, Null, Health(Event Player) - 1);
+	}
+}
+
+rule("Roadhog_HealingTest Dies")
+{
+	event
+	{
+		Player Died;
+		Team 1;
+		Roadhog;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[24];
+	}
+
+	actions
+	{
+		Wait(0.25, Ignore Condition);	//Delay to see kill-credit
+		Destroy Dummy Bot(Team 1, Slot Of(Event Player));
+		Create Dummy Bot(Hero(Roadhog), Team 1, -1, Vector(79.684, 8.674, -5.637), Vector(-0.600, 0, 0.800));
+		Global.Dummies[24]=Last Created Entity;
 	}
 }
 
@@ -2307,13 +2448,14 @@ rule("Baptiste_Matrix")
 
 	actions
 	{
-		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0])+Vector(0,-0.25,0), 1000, To World, Direction and Turn Rate);
+		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0])+Vector(0,-0.187,0), 1000, To World, Direction and Turn Rate);
 		Set Ultimate Charge(Event Player, 100);
+		Set Gravity(Event Player, 0);
 		Set Status(Event Player, Null, Phased Out, 5);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0])+Vector(0,0,-1));
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0])+Facing Direction Of(Global.PlayerEventInfo[0])*(-1));
 		Wait(0.1, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
-		Wait(0.050, Ignore Condition);
+		Wait(0.05, Ignore Condition);
 		Press Button(Event Player, Button(Primary Fire));
 		Wait(0.1, Ignore Condition);
 		Set Status(Event Player, Null, Hacked, 3);
@@ -2341,15 +2483,14 @@ rule("Ana_Nano Boost")
 
 	actions
 	{
-		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo[0])), 5100, To World, Direction and Turn Rate);
-		Wait(0.050, Ignore Condition);
-		Set Ultimate Charge(Event Player, 100);
-		Wait(0.250, Ignore Condition);
+		Start Scaling Player(Event Player, 0.1, True);
 		Set Status(Event Player, Null, Phased Out, 5);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0])+Vector(0,0,-1));
-		Wait(0.25, Ignore Condition);
+		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Global.PlayerEventInfo[0])), 5100, To World, Direction and Turn Rate);
+		Set Ultimate Charge(Event Player, 100);
+		Attach Players(Event Player, Global.PlayerEventInfo[0], Vector(0,1,1)+Position Of(Global.PlayerEventInfo[0]-Position Of(Global.PlayerEventInfo[0])));
+		Wait(0.1, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
-		Wait(0.25, Ignore Condition);
+		Wait(0.15, Ignore Condition);	//0.13 minimum
 		Set Status(Event Player, Null, Hacked, 1);
 		Teleport(Event Player, Vector(47,20,40));
 		Wait(8.5-0.25, Ignore Condition);
@@ -2719,7 +2860,7 @@ rule("Widow Bot Dies")
 	}
 }
 
-rule("Roadhog Bot Health")
+rule("Roadhog_DamgeTest Bot Health")
 {
 	event
 	{
@@ -2743,7 +2884,7 @@ rule("Roadhog Bot Health")
 	}
 }
 
-rule("Roadhog Bot Timer")
+rule("Roadhog_DamgeTest Bot Timer")
 {
 	event
 	{
@@ -2787,7 +2928,7 @@ rule("Roadhog Bot Timer")
 	}
 }
 
-rule("Roadhog Bot Dies")
+rule("Roadhog_DamgeTest Bot Dies")
 {
 	event
 	{
@@ -3187,7 +3328,7 @@ rule("Lucio Bot Out of Bounds")
 	}
 }
 
-rule("Friendly Pharah Bot Health")
+rule("Friendly Pharah Bot")
 {
 	event
 	{
@@ -3205,10 +3346,29 @@ rule("Friendly Pharah Bot Health")
 	actions
 	{
 		Set Max Health(Event Player, 9999);
-		disabled Set Healing Received(Event Player, 0.010);
-		Wait(0.050, Ignore Condition);
 		Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Eye Position(Closest Player To(Vector(61.797, 0.475,
 			28.245), Team 1))), 800, To World, Direction and Turn Rate);
+		Damage(Event Player, Null, Health(Event Player) - 1);
+	}
+}
+
+rule("Friendly Pharah Bot - Health reset")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Pharah;
+	}
+
+	conditions
+	{
+		Event Player == Global.Dummies[2];
+		Health(Event Player)>=Max Health(Event Player);
+	}
+
+	actions
+	{
 		Damage(Event Player, Null, Health(Event Player) - 1);
 	}
 }
@@ -3390,12 +3550,15 @@ rule("Kiriko_Rush")
 
 	actions
 	{
-		Start Facing(Event Player, Facing Direction Of(Global.PlayerEventInfo[0]), 1000, To World, Direction and Turn Rate);
-		Wait(0.050, Ignore Condition);
+		Event Player.Tmp=Facing Direction Of(Global.PlayerEventInfo[0]);
+
+		Start Scaling Player(Event Player, 0.1, True);
+		Set Gravity(Event Player, 0);
+		Start Facing(Event Player, Event Player.Tmp, 1000, To World, Direction and Turn Rate);
 		Set Ultimate Charge(Event Player, 100);
-		Wait(0.250, Ignore Condition);
 		Set Status(Event Player, Null, Phased Out, 5);
-		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0]));
+		Teleport(Event Player, Position Of(Global.PlayerEventInfo[0])+Event Player.Tmp*(-3)+Vector(0,2,0));
+		Wait(0.1, Ignore Condition);
 		Press Button(Event Player, Button(Ultimate));
 		Wait(0.75, Ignore Condition);
 		Set Status(Event Player, Null, Hacked, 1);
@@ -4250,11 +4413,13 @@ rule("Ramattra_Falloff - RidBot Button")
 		"Remove Ram"
 		if (Global.Dummies[21]!=null);
 			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[21]));
+			Global.Dummies[21]=null;
 		End;
 		
 		"Remove prev Petal"
 		if (Global.Dummies[22]!=null);
 			Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[22]));
+			Global.Dummies[22]=null;
 		End;
 		
 		"Dummy configuration/creation"
@@ -4296,6 +4461,7 @@ rule("LW_Petal")
 		Teleport(Event Player, Vector(47,20,40));
 		Wait(Global.Dummies[0][1] ? Global.Dummies[0][1] : Event Player.Tmp[0], Ignore Condition);
 		Destroy Dummy Bot(Team Of(Event Player), Slot Of(Event Player));
+		Global.Dummies[22]=null;
 	}
 }
 
