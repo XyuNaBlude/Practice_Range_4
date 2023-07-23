@@ -906,6 +906,20 @@ rule("Configuration – ButtonTrigger – InfAmmo")
 			Set Ammo(Event Player, 0, Max Ammo(Event Player,0));
 			Set Ammo(Event Player, 1, Max Ammo(Event Player,1));
 		End;
+		
+		"WorkArounds (Crunches)"
+		if (Event Player.InfAmmo==false);
+			if (Hero Of(Event Player)==Hero(Kiriko));
+				Set Max Ammo(Event Player, 0, 10);
+				Set Ammo(Event Player, 1, 15);
+			else if (Hero Of(Event Player)==Hero(Lifeweaver));
+				Set Ammo(Event Player, 0, 1);
+				Set Ammo(Event Player, 1, 1);
+			else if (Hero Of(Event Player)==Hero(Orisa));
+				//Set Max Ammo(Event Player, 0, 10); //too rude
+				Small Message(Event Player, Custom String("You need to switch hero to reset clip size"));
+			End;
+		End;
 	}
 }
 
@@ -1472,7 +1486,7 @@ rule("Numberz - Heal: Timer Run out")
 	}
 }
 
-rule("Infinite Ammo")
+rule("Infinite Ammo (InfAmmo)")
 {
 	event
 	{
@@ -1491,6 +1505,93 @@ rule("Infinite Ammo")
 	{
 		Set Ammo(Event Player, 0, 1000);
 		Set Ammo(Event Player, 1, 1000);
+	}
+}
+
+rule("Infinite Ammo (InfAmmo) – Kiriko")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Kiriko;
+	}
+	
+	conditions
+	{
+		Event Player.InfAmmo==true;
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+		)	== True;
+	}
+	
+	actions
+	{
+//		if (Max Ammo(Event Player, 0)<9999);	//Max Ammo can't be accessed, so it's disabled
+			Set Max Ammo(Event Player, 0, 9999);
+//		End;
+
+		Wait Until(Is Firing Primary(Event Player)!=True && Is Firing Secondary(Event Player)!=True, 9999);
+		
+		Set Ammo(Event Player, 1, 99);
+	}
+}
+
+rule("Infinite Ammo (InfAmmo) – Lifeweaver")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Lifeweaver;
+	}
+	
+	conditions
+	{
+		Event Player.InfAmmo==true;
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+		)	== True;
+	}
+	
+	actions
+	{
+		Wait Until(Is Firing Primary(Event Player)!=True && Is Firing Secondary(Event Player)!=True, 9999);
+
+		Set Ammo(Event Player, 0, 999);
+		Set Ammo(Event Player, 1, 999);
+	}
+}
+
+rule("Infinite Ammo (InfAmmo) – Orisa")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		Orisa;
+	}
+	
+	conditions
+	{
+		Event Player.InfAmmo==true;
+		(
+			Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True
+		)	== True;
+	}
+	
+	actions
+	{
+//		if (Max Ammo(Event Player, 0)<9999);	//Max Ammo can't be accessed, so it's disabled
+			Set Max Ammo(Event Player, 0, 9999);
+//		End;
+		
+		Wait Until(Is Firing Primary(Event Player)!=True && Is Firing Secondary(Event Player)!=True, 9999);
+
+		Set Ammo(Event Player, 0, 1000);
 	}
 }
 
