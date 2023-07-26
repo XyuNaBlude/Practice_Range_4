@@ -913,8 +913,8 @@ rule("Configuration – ButtonTrigger – InfAmmo")
 				Set Max Ammo(Event Player, 0, 10);
 				Set Ammo(Event Player, 1, 15);
 			else if (Hero Of(Event Player)==Hero(Lifeweaver));
-				Set Ammo(Event Player, 0, 1);
-				Set Ammo(Event Player, 1, 1);
+				Set Ammo(Event Player, 0, 2);
+				Set Ammo(Event Player, 1, 2);
 			else if (Hero Of(Event Player)==Hero(Orisa));
 				//Set Max Ammo(Event Player, 0, 10); //too rude
 				Small Message(Event Player, Custom String("You need to switch hero to reset clip size"));
