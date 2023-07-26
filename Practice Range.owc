@@ -2232,6 +2232,8 @@ rule("Baptiste_Matrix Button")
 	{
 		Global.PlayerEventInfo[0] = Event Player;
 		
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[4], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Global.Buttons[4], 1);
 		Small Message(Event Player, 2);
 		Wait(1, Ignore Condition);
 		Small Message(Event Player, 1);
@@ -2271,6 +2273,8 @@ rule("Ana_Nano Button")
 	{
 		Global.PlayerEventInfo[0] = Event Player;
 		
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[3], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Global.Buttons[3], 1);
 		Small Message(Event Player, 2);
 		Wait(1, Ignore Condition);
 		Small Message(Event Player, 1);
@@ -2309,11 +2313,19 @@ rule("Pocket_Mercy Button")
 	actions
 	{
 		if ((Global.Dummies[15]==Null) || (Entity Exists(Global.Dummies[15])==false));
+			"Button effect"
+			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[1], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[1], 1);
+			"Dummy creation"
 			Create Dummy Bot(Hero(Mercy), Team 1, -1, Vector(84,-3,18), Direction Towards(Position Of(Event Player), Eye Position(Event Player)));
 			Global.Dummies[15]=Last Created Entity;
 			Global.PlayerEventInfo[5]=Event Player;
 			Small Message(Event Player, Custom String("Use ''Need Healing!'' for Heal"));
 		else;
+			"Button effect"
+			Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[1], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[1], 1);
+			"Dummy destruction"
 			Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[15]));
 			Global.Dummies[15]=Null;
 			Global.PlayerEventInfo[5]=Null;
@@ -2342,6 +2354,8 @@ rule("Kiriko_Rush Button")
 	{
 		Global.PlayerEventInfo[0] = Event Player;
 		
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[2], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Global.Buttons[2], 1);
 		Small Message(Event Player, 2);
 		Wait(1, Ignore Condition);
 		Small Message(Event Player, 1);
@@ -4192,11 +4206,19 @@ rule("Pocket_Lucio Button")	//Lúcio
 	actions
 	{
 		if ((Global.Dummies[19]==Null) || (Entity Exists(Global.Dummies[19])==false));
+			"Button effect"
+			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[24], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Green), Global.Buttons[24], 1);
+			"Dummy creation"
 			Create Dummy Bot(Hero(Lúcio), Team 1, -1, Vector(84,-3,18), Direction Towards(Position Of(Event Player), Eye Position(Event Player)));
 			Global.Dummies[19]=Last Created Entity;
 			Global.PlayerEventInfo[6]=Event Player;
 			Small Message(Event Player, Custom String("Use ''Need Healing!'' for Boost"));
 		else;
+			"Button effect"
+			Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[24], 100);
+			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[24], 1);
+			"Dummy destruction"
 			Communicate(Global.Dummies[19], Goodbye);
 			Wait(1, Ignore Condition);
 			Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[19]));
@@ -4300,6 +4322,8 @@ rule("Zen_Discord Button")
 			disabled Destroy Dummy Bot(Team 1, Slot Of(Global.Dummies[20]));
 		End;
 		
+		Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.Buttons[25], 100);
+		Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Global.Buttons[25], 1);
 		Small Message(Event Player, 3);
 		Wait(1, Ignore Condition);
 		Small Message(Event Player, 2);
