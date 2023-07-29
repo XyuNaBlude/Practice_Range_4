@@ -306,8 +306,7 @@ rule("Tooltips")
 			Players Within Radius(Vector(42.46,5,35.07),8, All Teams, Surfaces),
 			Custom String
 			(
-			 "• Callout 'Going In' for Petal Platform",
-			 Input Binding String(Button(Interact))
+			 "• Callout 'Going In' for Petal Platform"
 			),
 			Vector(42.46,5,35.07)+Vector(0,-1,0),
 			1.25, Do Not Clip, Visible To and String, Color(White), Default Visibility
@@ -317,11 +316,34 @@ rule("Tooltips")
 			Players Within Radius(Vector(42.46,5,35.07),8, All Teams, Surfaces),
 			Custom String
 			(
-			 "· 'Crouch'+'Help!' – Nothing",
-			 Input Binding String(Button(Interact))
+			 "· 'Crouch'+'Help!' – Nothing"
 			),
 			Vector(42.46,5,35.07)+Vector(0,-1.25,0),
 			1, Do Not Clip, Visible To and String, Color(White), Default Visibility
+		);
+		Create In-World Text
+		(
+			Filtered Array(Players On Hero(Hero(Zarya),Team 1), Distance Between(Closest Player To(Vector(42.46,5,35.07), Team 1), Vector(42.46,5,35.07))<=8),
+			Custom String
+			(
+			 "• [{0}]+[{1}] – Gain Barrier Charge",
+			 Input Binding String(Button(Crouch)),
+			 Input Binding String(Button(Ability 1))
+			),
+			Vector(42.46,5,35.07)+Vector(0,-1.5,0),
+			1.25, Do Not Clip, Visible To and String, Color(White), Default Visibility
+		);
+		Create In-World Text
+		(
+			Filtered Array(Players On Hero(Hero(Doomfist),Team 1), Distance Between(Closest Player To(Vector(42.46,5,35.07), Team 1), Vector(42.46,5,35.07))<=8),
+			Custom String
+			(
+			 "• [{0}]+[{1}] – Gain Fist Charge",
+			 Input Binding String(Button(Crouch)),
+			 Input Binding String(Button(Ability 2))
+			),
+			Vector(42.46,5,35.07)+Vector(0,-1.5,0),
+			1.25, Do Not Clip, Visible To and String, Color(White), Default Visibility
 		);
 		
 		
