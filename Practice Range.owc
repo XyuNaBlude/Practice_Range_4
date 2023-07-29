@@ -1974,7 +1974,7 @@ rule("Pharah Button")
 		End;
 		
 		"Action"
-		if (Global.BotToggles[2]>0);
+		If (Global.BotToggles[2]>0);
 			"Button effect"
 			Play Effect(All Players(All Teams), Ring Explosion Sound, Color(Yellow), Global.Buttons[9], 100);
 			Play Effect(All Players(All Teams), Ring Explosion, Color(Yellow), Global.Buttons[9], 1);
@@ -1984,17 +1984,19 @@ rule("Pharah Button")
 				Create Dummy Bot(Hero(Pharah), Team 2, -1, Vector(84.571, 0.076, 7.529), Vector(-0.600, 0, 0.800));
 			else;	//Global.BotToggles[2]==1
 				"Friendly Pharah"
-				if (Entity Exists(Global.Dummies[7])==true);
+				if ((Global.Dummies[7]) && (Entity Exists(Global.Dummies[7])));
 					Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[7]));
 					Global.Dummies[7]=Null;
 				End;
-				Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[2]));
-				Global.Dummies[2]=Null;
+				if ((Global.Dummies[2]) && (Entity Exists(Global.Dummies[2])));
+					Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[2]));
+					Global.Dummies[2]=Null;
+				end;
 				Create Dummy Bot(Hero(Pharah), Team 1, -1, Vector(84.571, 0.076, 7.529), Vector(-0.600, 0, 0.800));
 			End;
 			"Saving Last Created Pharah's Entity info"
 			Global.Dummies[2]=Last Created Entity;
-		else;	//Global.BotToggles[2]==0
+		Else;	//Global.BotToggles[2]==0
 			"Button effect"
 			Play Effect(All Players(All Teams), Debuff Impact Sound, Color(White), Global.Buttons[9], 100);
 			Play Effect(All Players(All Teams), Ring Explosion, Color(Red), Global.Buttons[9], 1);
@@ -2936,7 +2938,7 @@ rule("Reaper Bot Movement")
 	
 	conditions
 	{
-		Event Player == Global.Dummies[5];
+		Event Player == Global.Dummies[3];
 		Is Alive(Event Player) == True;
 	}
 
@@ -2977,14 +2979,14 @@ rule("Reaper Bot Dies")
 	
 	conditions
 	{
-		Event Player == Global.Dummies[5];
+		Event Player == Global.Dummies[3];
 	}
 
 	actions
 	{
 		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
 		Create Dummy Bot(Hero(Reaper), Team 2, -1, Vector(77.884, 3.813, 35.699), Vector(0.810, -0.170, 0.560));
-		Global.Dummies[5]=Last Created Entity;
+		Global.Dummies[3]=Last Created Entity;
 	}
 }
 
