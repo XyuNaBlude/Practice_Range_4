@@ -976,7 +976,7 @@ rule("Configuration – ButtonTrigger – InfAmmo")
 		"WorkArounds (Crunches)"
 		if (Event Player.InfAmmo==false);
 			if (Hero Of(Event Player)==Hero(Kiriko));
-				Set Max Ammo(Event Player, 0, 10);
+				Set Max Ammo(Event Player, 0, 5);
 				Set Ammo(Event Player, 1, 15);
 			else if (Hero Of(Event Player)==Hero(Lifeweaver));
 				Set Ammo(Event Player, 0, 2);
