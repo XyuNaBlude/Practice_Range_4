@@ -249,7 +249,7 @@ rule("Global Variables")
 	}
 }
 
-rule("Tooltips, Avatars")
+rule("Tooltips")
 {
 	event
 	{
@@ -258,14 +258,73 @@ rule("Tooltips, Avatars")
 
 	actions
 	{
-		"Controls"
+		"Controls"	// Vector(42.46,5,35.07)
+		//Gaps: a: 1.25,-0.25; b: 1,-0.15
 		Create In-World Text
 		(
-			Players Within Radius(Vector(52.43,4.5,27.44),10, All Teams, Surfaces),
-			Custom String("Controls: \n• 'Crouch'+'Interact' – Ult recharge \n• 'Voicelines' to call supports \n· 'Crouch'+'Help!' – ???\n\n~Have Fun!~"),
-			Vector(52.43,4.5,27.44),
-			1, Clip Against Surfaces, Visible To, Color(Orange), Default Visibility
+			Players Within Radius(Vector(42.46,5,35.07),15, All Teams, Surfaces),
+			Custom String("Controls"),
+			Vector(42.46,5,35.07),
+			1.5, Do Not Clip, Visible To, Color(Lime Green), Default Visibility
 		);
+		
+		Create In-World Text
+		(
+			Players Within Radius(Vector(42.46,5,35.07),8, All Teams, Surfaces),
+			Custom String
+			(
+			 "• Press buttons with [{0}]",
+			 Input Binding String(Button(Interact))
+			),
+			Vector(42.46,5,35.07)+Vector(0,-0.25,0),
+			1.25, Do Not Clip, Visible To and String, Color(White), Default Visibility
+		);
+		Create In-World Text
+		(
+			Players Within Radius(Vector(42.46,5,35.07),8, All Teams, Surfaces),
+			Custom String
+			(
+			 "• [{0}]+[{1}] – Refill Ultimate",
+			 Input Binding String(Button(Crouch)),
+			 Input Binding String(Button(Interact))
+			),
+			Vector(42.46,5,35.07)+Vector(0,-0.5,0),
+			1.25, Do Not Clip, Visible To and String, Color(White), Default Visibility
+		);
+		Create In-World Text
+		(
+			Players Within Radius(Vector(42.46,5,35.07),8, All Teams, Surfaces),
+			Custom String
+			(
+			 "• Use 'Voicelines' to call Supports"
+			),
+			Vector(42.46,5,35.07)+Vector(0,-0.75,0),
+			1.25, Do Not Clip, Visible To and String, Color(White), Default Visibility
+		);
+		Create In-World Text
+		(
+			Players Within Radius(Vector(42.46,5,35.07),8, All Teams, Surfaces),
+			Custom String
+			(
+			 "• Callout 'Going In' for Petal Platform",
+			 Input Binding String(Button(Interact))
+			),
+			Vector(42.46,5,35.07)+Vector(0,-1,0),
+			1.25, Do Not Clip, Visible To and String, Color(White), Default Visibility
+		);
+		Create In-World Text
+		(
+			Players Within Radius(Vector(42.46,5,35.07),8, All Teams, Surfaces),
+			Custom String
+			(
+			 "· 'Crouch'+'Help!' – Nothing",
+			 Input Binding String(Button(Interact))
+			),
+			Vector(42.46,5,35.07)+Vector(0,-1.25,0),
+			1, Do Not Clip, Visible To and String, Color(White), Default Visibility
+		);
+		
+		
 	}
 }
 
