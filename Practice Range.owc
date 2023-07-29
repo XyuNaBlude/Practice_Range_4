@@ -5123,9 +5123,15 @@ rule("SparringBot – HealAmp – Bot")
 		"Mercy"
 		else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Mercy));
 			if (Global.SparringBotHealing_Abilities[0][1]==Button(Primary Fire));
-				Set Weapon(Event Player, 1);
-				Wait(0.1,Ignore Condition);
-				Start Holding Button(Event Player, Button(Primary Fire));
+				while (true);
+					Set Weapon(Event Player, 1);
+					Wait(0.1, Ignore Condition);
+					Start Holding Button(Event Player, Button(Primary Fire));
+					Wait Until (IsAlive(Event Player)==false, 9999);
+					Stop Holding Button(Event Player, Button(Primary Fire));
+					Wait Until (IsAlive(Event Player)==true, 9999);
+					Wait(0.5, Ignore Condition);
+				end;
 			End;
 		
 		"Moira"
