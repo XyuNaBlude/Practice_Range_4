@@ -654,14 +654,17 @@ rule("Placing Bots from the Start")
 	
 	actions
 	{
+		/*
 		"Vanilla bot on Ruler - Removal"
 		Global.Dummies[0]=Array(Vector(92.82,-2,-7.63),10);	// [Position, Duration]
 		Create Dummy Bot(Hero(Lifeweaver), Team 2, -1, Vector(47,20,40), Vector(0,0,0));
 		Global.Dummies[22]=Last Created Entity;
 		Wait(1, Ignore Condition);
+		*/
 		
 		"Ramattra_Falloff"
-		Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(92.82,-2,-7.63), Vector(-0.59,0,0.81));
+		Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(93.21,-2,-5.37), Vector(-0.59,0,0.81));
+		//Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(92.82,-2,-7.63), Vector(-0.59,0,0.81));
 		Global.Dummies[21]=Last Created Entity;
 	}
 }
@@ -4548,7 +4551,8 @@ rule("Ramattra_Falloff Button")
 			if (Entity Exists(Global.Dummies[21])==true);
 				Destroy Dummy Bot(Team 2, Slot Of(Global.Dummies[21]));	//crunch
 			End;
-			Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(92.82,-2,-7.63), Vector(-0.59,0,0.81));
+			Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(93.21,-2,-5.37), Vector(-0.59,0,0.81));
+			//Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(92.82,-2,-7.63), Vector(-0.59,0,0.81));
 			Global.Dummies[21]=Last Created Entity;
 			Event Player.Ruler[0]=true;
 			Event Player.Ruler[1]=Event Player;
@@ -4628,7 +4632,8 @@ rule("Ramattra_Falloff Dies")
 	actions
 	{
 		Destroy Dummy Bot(Team 2, Slot Of(Event Player));
-		Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(92.82,-2,-7.63), Vector(-0.59,0,0.81));
+		Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(93.21,-2,-5.37), Vector(-0.59,0,0.81));
+		//Create Dummy Bot(Hero(Ramattra), Team 2, -1, Vector(92.82,-2,-7.63), Vector(-0.59,0,0.81));
 		Global.Dummies[21]=Last Created Entity;
 		Host Player.Ruler[2]=Global.Dummies[21];
 	}
