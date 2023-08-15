@@ -40,6 +40,18 @@ settings
 				Deflect Cooldown Time: 0%
 			}
 
+			Illari
+			{
+				Solar Energy Maximum: 500%
+				Solar Energy Recharge Rate: 500%
+			}
+
+			Moira
+			{
+				Biotic Energy Maximum: 500%
+				Biotic Energy Recharge Rate: 500%
+			}
+
 			Reaper
 			{
 				Shadow Step Cooldown Time: 0%
@@ -87,10 +99,10 @@ settings
 		{
 			Spawn With Ultimate Ready: On
 
-			Moira
+			D.Va
 			{
-				Biotic Energy Maximum: 500%
-				Biotic Energy Recharge Rate: 500%
+				Defense Matrix Maximum Time: 500%
+				Defense Matrix Recharge Rate: 500%
 			}
 
 			Pharah
@@ -4889,16 +4901,19 @@ rule("SparringBot – Init")
 		Global.SparringBotHealing_Abilities[3]=		Array(Hero(Baptiste),		Button(Ability 1));
 		Global.SparringBotHealing_Abilities[4]=		Array(Hero(Baptiste),		Button(Ability 2));
 		Global.SparringBotHealing_Abilities[5]=		Array(Hero(Kiriko),			Button(Primary Fire));
-		Global.SparringBotHealing_Abilities[6]=		Array(Hero(Brigitte),		Button(Primary Fire));
-		Global.SparringBotHealing_Abilities[7]=		Array(Hero(Brigitte),		Button(Ability 2));
-		Global.SparringBotHealing_Abilities[8]=		Array(Hero(Lifeweaver),	Button(Primary Fire));
-		Global.SparringBotHealing_Abilities[9]=		Array(Hero(Lifeweaver),	Button(Ultimate));
-		Global.SparringBotHealing_Abilities[10]=	Array(Hero(Lúcio),			Button(Ability 1));
-		Global.SparringBotHealing_Abilities[11]=	Array(Hero(Lúcio),			Button(Ultimate));
-		Global.SparringBotHealing_Abilities[12]=	Array(Hero(Mercy),			Button(Primary Fire));
-		Global.SparringBotHealing_Abilities[13]=	Array(Hero(Moira),			Button(Primary Fire));
-		Global.SparringBotHealing_Abilities[14]=	Array(Hero(Zenyatta),		Button(Ability 1));
-		Global.SparringBotHealing_Abilities[15]=	Array(Hero(Zenyatta),		Button(Ultimate));
+		Global.SparringBotHealing_Abilities[6]=		Array(Hero(Kiriko),			Button(Ability 2));
+		Global.SparringBotHealing_Abilities[7]=		Array(Hero(Brigitte),		Button(Primary Fire));
+		Global.SparringBotHealing_Abilities[8]=		Array(Hero(Brigitte),		Button(Ability 2));
+		Global.SparringBotHealing_Abilities[9]=		Array(Hero(Lifeweaver),	Button(Primary Fire));
+		Global.SparringBotHealing_Abilities[10]=	Array(Hero(Lifeweaver),	Button(Ultimate));
+		Global.SparringBotHealing_Abilities[11]=	Array(Hero(Lúcio),			Button(Ability 1));
+		Global.SparringBotHealing_Abilities[12]=	Array(Hero(Lúcio),			Button(Ultimate));
+		Global.SparringBotHealing_Abilities[13]=	Array(Hero(Mercy),			Button(Primary Fire));
+		Global.SparringBotHealing_Abilities[14]=	Array(Hero(Moira),			Button(Primary Fire));
+		Global.SparringBotHealing_Abilities[15]=	Array(Hero(Zenyatta),		Button(Ability 1));
+		Global.SparringBotHealing_Abilities[16]=	Array(Hero(Zenyatta),		Button(Ultimate));
+		Global.SparringBotHealing_Abilities[17]=	Array(Hero(Illari),			Button(Primary Fire));	//Secondary actually
+		Global.SparringBotHealing_Abilities[18]=	Array(Hero(Illari),			Button(Ability 2));
 		
 		"·UI Generation·"
 		"Calculaions (part)"
@@ -4932,7 +4947,8 @@ rule("SparringBot – Init")
 		End;
 		
 		"Center of the Grid"
-		Global.SparringBotHealing_Calcs[3]=Global.SparringBotHealing_Buttons[Round To Integer((Count Of(Global.SparringBotHealing_Buttons))/2, Up)];	//Center of the Grid
+		Global.SparringBotHealing_Calcs[3]=Global.SparringBotHealing_Buttons[8];	//SELECT Center of the Grid
+		//Global.SparringBotHealing_Calcs[3]=Global.SparringBotHealing_Buttons[Round To Integer(((Count Of(Global.SparringBotHealing_Buttons))-1)/2, Down)];	//Center of the Grid
 		
 		"Debug-Spheres"
 		disabled Create Effect	//debug
@@ -5059,13 +5075,13 @@ rule("SparringBot – HealAmp – Bot")
 		Wait(1, Ignore Condition);
 		
 		"Ana"
-		if (Global.SparringBotHealing_Abilities[0][0]==Hero(Ana));
+		If (Global.SparringBotHealing_Abilities[0][0]==Hero(Ana));
 			if (Global.SparringBotHealing_Abilities[0][1]==Button(Primary Fire));
 				Start Holding Button(Event Player, Button(Primary Fire));
 			End;
 		
 		"Baptiste"
-		else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Baptiste));
+		Else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Baptiste));
 			if (Global.SparringBotHealing_Abilities[0][1]==Button(Secondary Fire));
 				while (true);
 					Start Holding Button(Event Player, Button(Secondary Fire));
@@ -5091,13 +5107,20 @@ rule("SparringBot – HealAmp – Bot")
 			End;
 		
 		"Kiriko"
-		else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Kiriko));
+		Else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Kiriko));
 			if (Global.SparringBotHealing_Abilities[0][1]==Button(Primary Fire));
 				Start Holding Button(Event Player, Button(Primary Fire));
-			end;
+				
+			else if (Global.SparringBotHealing_Abilities[0][1]==Button(Ability 2));
+				while (true);
+					Set Ability Cooldown(Event Player, Button(Ability 2),0);
+					Press Button(Event Player, Button(Ability 2));
+					Wait(2.5, Ignore Condition);
+				end;
+			End;
 		
 		"Brigitte"
-		else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Brigitte));
+		Else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Brigitte));
 			if (Global.SparringBotHealing_Abilities[0][1]==Button(Primary Fire));
 				"victim creation"
 				Create Dummy Bot(Hero(Widowmaker), Team 1, -1, Vector(47,20,40), Vector(0,0,0));
@@ -5121,7 +5144,7 @@ rule("SparringBot – HealAmp – Bot")
 			End;
 	
 		"Lifeweaver"
-		else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Lifeweaver));
+		Else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Lifeweaver));
 			if (Global.SparringBotHealing_Abilities[0][1]==Button(Primary Fire));
 				while (true);
 					Set Ammo(Event Player,0,200);
@@ -5144,7 +5167,7 @@ rule("SparringBot – HealAmp – Bot")
 			End;
 		
 		"Lúcio"
-		else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Lúcio));
+		Else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Lúcio));
 			if (Global.SparringBotHealing_Abilities[0][1]==Button(Ability 1));
 				while (true);
 					Press Button(Event Player, Button(Ability 1));
@@ -5166,7 +5189,7 @@ rule("SparringBot – HealAmp – Bot")
 			End;
 		
 		"Mercy"
-		else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Mercy));
+		Else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Mercy));
 			if (Global.SparringBotHealing_Abilities[0][1]==Button(Primary Fire));
 				while (true);
 					Set Weapon(Event Player, 1);
@@ -5180,19 +5203,20 @@ rule("SparringBot – HealAmp – Bot")
 			End;
 		
 		"Moira"
-		else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Moira));
+		Else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Moira));
 			if (Global.SparringBotHealing_Abilities[0][1]==Button(Primary Fire));
 				Start Holding Button(Event Player, Button(Primary Fire));
 			End;
 		
 		"Zenyatta"
-		else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Zenyatta));
+		Else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Zenyatta));
 			if (Global.SparringBotHealing_Abilities[0][1]==Button(Ability 1));
 				while (true);
 					Press Button(Event Player, Button(Ability 1));
 					Wait Until(Is Using Ability 1(Event Player)==true, 1);
 					Wait Until(Is Using Ability 1(Event Player)==false, 9999);
 				end;
+			
 			else if (Global.SparringBotHealing_Abilities[0][1]==Button(Ultimate));
 				while (true);
 					Set Ultimate Charge(Event Player, 100);
@@ -5202,6 +5226,30 @@ rule("SparringBot – HealAmp – Bot")
 					Wait(0.5, Ignore Condition);
 				end;
 			End;
+		
+		"Illari"
+		Else if (Global.SparringBotHealing_Abilities[0][0]==Hero(Illari));
+			if (Global.SparringBotHealing_Abilities[0][1]==Button(Primary Fire));
+				Start Holding Button(Event Player, Button(Secondary Fire));
+			
+			else if (Global.SparringBotHealing_Abilities[0][1]==Button(Ability 2));
+				while (true);
+					Start Facing(Event Player, Vector(-0.62, 0.35, -0.75), 1000, To World, Direction and Turn Rate);
+					Set Ability Cooldown(Event Player, Button(Ability 2), 0);
+					Press Button(Event Player, Button(Ability 2));
+					
+					Wait(1, Ignore Condition);
+					Stop Facing(Event Player);
+					Start Facing(Event Player, Vector(0, -1, 0), 1000, To World, Direction and Turn Rate);
+					break;	//▓
+					/*
+					Wait Until(Is Using Ability 2(Event Player)==true, 5);
+					Wait Until(Is Using Ability 2(Event Player)==false, 9999);
+					Wait(2, Ignore Condition);
+					*/
+				end;
+			End;
+		
 		End;
 	}
 }
