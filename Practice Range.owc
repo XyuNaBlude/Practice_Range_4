@@ -522,7 +522,7 @@ rule("Buttons, Tooltips")
 		);
 		
 		"Sombra Button"
-		Global.Buttons[17]=Vector(76.424,-2.824,45.714);
+		Global.Buttons[17]=Vector(73.62,-2.6,43.69);
 		Create Effect(All Players(All Teams), Sphere, Color(Purple), Global.Buttons[17], 0.3, Visible To);
 		Create In-World Text
 		(
