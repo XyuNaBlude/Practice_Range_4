@@ -3786,18 +3786,16 @@ rule("Zarya Charge")
 	conditions
 	{
 		Is Button Held(Event Player, Button(Crouch)) == True;
-		Is Button Held(Event Player, Button(Ability 1)) == True;
+		Is Using Ability 1(Event Player) == True;
 	}
 
 	actions
 	{
-		Create Dummy Bot(Hero(Torbjörn), Team 2, -1, Position Of(Event Player) - Facing Direction Of(Event Player), Facing Direction Of(Event Player));
-		Event Player.Tmp[0]=Last Created Entity;
-		Start Facing(Event Player.Tmp[0], Direction Towards(Eye Position(Event Player.Tmp[0]), Eye Position(Event Player)), 700, To World, Direction and Turn Rate);
-		Wait(0.250, Ignore Condition);
-		Press Button(Event Player.Tmp[0], Button(Secondary Fire));
-		Wait(0.250, Ignore Condition);
-		Destroy Dummy Bot(Team 2, Slot Of(Event Player.Tmp[0]));
+		Damage(Event Player, Null, 1000);
+		Wait(0.100, Ignore Condition);
+		disabled Set Ability Cooldown(Event Player, Button(Ability 1), False);
+		disabled Press Button(Event Player, Button(Ability 1));
+		Wait Until(Is Using Ability 1(Event Player)==false, 9999);
 	}
 }
 
