@@ -1,0 +1,182 @@
+settings
+{
+	main
+	{
+		Description: "Modified Practice Range 2.2 by PMAJellies \n3.3 by Scales #11791 \n3.5 by github.com/Quota \n4.2 by Kocou #21168"
+		Mode Name: "Practice Range 4.2"
+	}
+
+	lobby
+	{
+		Allow Players Who Are In Queue: Yes
+		Max Spectators: 0
+		Max Team 1 Players: 1
+	}
+
+	modes
+	{
+		Practice Range
+
+		General
+		{
+			Game Mode Start: Manual
+			Hero Limit: Off
+			Respawn Time Scalar: 25%
+			Tank Role Passive Health Bonus: Always Enabled
+		}
+	}
+
+	heroes
+	{
+		Team 1
+		{
+			Ability Cooldown Time: 0%
+			
+			Roadhog
+			{
+				Take a Breather Recharge Rate: 500%
+			}
+		}
+
+
+		Team 2
+		{
+			Genji
+			{
+				Deflect Cooldown Time: 0%
+			}
+
+			Illari
+			{
+				Solar Energy Maximum: 500%
+				Solar Energy Recharge Rate: 500%
+			}
+
+			Moira
+			{
+				Biotic Energy Maximum: 500%
+				Biotic Energy Recharge Rate: 500%
+			}
+
+			Reaper
+			{
+				Shadow Step Cooldown Time: 0%
+				Wraith Form Cooldown Time: 0%
+			}
+
+			Reinhardt
+			{
+				Barrier Field Cooldown Time: 0%
+				Barrier Field Recharge Rate: 500%
+				Charge Cooldown Time: 0%
+				Damage Dealt: 10%
+				Fire Strike Cooldown Time: 0%
+				Spawn With Ultimate Ready: On
+				Ultimate Generation - Passive Earthshatter: 500%
+				Ultimate Generation Earthshatter: 500%
+			}
+
+			Symmetra
+			{
+				Sentry Turret Cooldown Time: 0%
+			}
+
+			Tracer
+			{
+				Blink Cooldown Time: 0%
+				Damage Dealt: 10%
+				Recall Cooldown Time: 0%
+			}
+
+			Widowmaker
+			{
+				Grappling Hook Cooldown Time: 0%
+			}
+		}
+
+		General
+		{
+			Spawn With Ultimate Ready: On
+
+			D.Va
+			{
+				Defense Matrix Maximum Time: 500%
+				Defense Matrix Recharge Rate: 500%
+			}
+
+			Pharah
+			{
+				Hover Jets Unlimited Fuel: On
+			}
+
+			Zarya
+			{
+				Particle Barrier Cooldown Time: 0%
+			}
+		}
+	}
+
+	extensions
+	{
+		Beam Effects
+	}
+}
+
+variables
+{
+	global:
+		0: Tmp
+		1: PlayerEventInfo	//[Tmp, Hero, .., .., .., PocketMercy, Lúcio]
+		2: Rnd
+		11: RP	//Rectangular Panel
+		32: XXX
+		
+	player:
+		1: Tmp
+		2: Rnd
+		3: PlayerInfo	//[..., Hero]
+}
+
+//-------------------------------------------------------------------------------------------------------------------------
+
+rule("Debug Coords")
+{
+	event
+	{
+		Ongoing - Each Player;
+		Team 1;
+		All;
+	}
+
+	actions
+	{
+		Create HUD Text(Event Player, Facing Direction Of(Event Player), Null, Null, Left, 0, Color(White), Color(White), Color(White),
+			Visible To and String, Default Visibility);
+		Create HUD Text(Event Player, Eye Position(Event Player), Null, Null, Left, 0, Color(White), Color(White), Color(White),
+			Visible To and String, Default Visibility);
+	}
+}
+
+disabled rule("RayCast Tool")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+
+	conditions
+	{
+		Is Button Held(Event Player, Button(Primary Fire)) == True;
+	}
+
+	actions
+	{
+		Event Player.Tmp = Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player) + Facing Direction Of(Event Player) * 100, Null, Event Player, False);
+		Create Effect(All Players(All Teams), Sphere, Color(Purple), Last Of(Event Player.Tmp), 0.2, None);
+		Log To Inspector(Event Player.Tmp);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------------------------------
