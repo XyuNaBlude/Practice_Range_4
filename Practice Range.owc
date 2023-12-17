@@ -128,7 +128,7 @@ variables
 		0: Tmp
 		1: PlayerEventInfo	//[Tmp, Hero, .., .., .., PocketMercy, Lúcio]
 		2: Rnd
-		11: RP	//Rectangular Panel
+		11: QRP	//Quadrangular/Rectangular Panel
 		32: XXX
 		
 	player:
@@ -180,3 +180,115 @@ disabled rule("RayCast Tool")
 }
 
 //-------------------------------------------------------------------------------------------------------------------------
+
+rule("Quadrangular Panel (Trigger Base) – Initialization")
+{
+	event
+	{
+		Ongoing - Global;
+	}
+	
+	actions
+	{
+		Global.QRP[1]=Vector(65.86,0.13,25.24);
+		Global.QRP[2]=Vector(67.07,0.13,23.54);
+		Global.QRP[3]=Vector(67.07,-1.34,23.54);
+		Global.QRP[4]=Vector(65.86,-1.34,25.24);
+		
+		For Global Variable(Tmp, 1, Count Of(Global.QRP), 1);
+			Create Effect(All Players(All Teams), Sphere, Color(Black), Global.QRP[Global.Tmp], 0.1, Visible To);
+		End;
+		Create Beam Effect(All Players(All Teams), Grapple Beam, Global.QRP[1], Global.QRP[2], Color(White), Visible To);
+		Create Beam Effect(All Players(All Teams), Grapple Beam, Global.QRP[2], Global.QRP[3], Color(White), Visible To);
+		Create Beam Effect(All Players(All Teams), Grapple Beam, Global.QRP[3], Global.QRP[4], Color(White), Visible To);
+		Create Beam Effect(All Players(All Teams), Grapple Beam, Global.QRP[4], Global.QRP[1], Color(White), Visible To);
+	}
+}
+
+rule("Quadrangular Panel (Trigger Base) – Trigger")
+{
+	event
+	{
+		Ongoing - Each Player;
+		All;
+		All;
+	}
+	
+	conditions
+	{
+			(Is Firing Primary(Event Player)==True
+	||	Is Firing Secondary(Event Player)==True) == true;
+//			Distance Between(Position Of(Event Player), Vector(68.76,-2,25.36)) <= 10;
+	}
+	
+	actions
+	{
+		Global.QRP[11]=0;
+		Global.QRP[12]=0;
+		Global.QRP[20]=0;
+		Global.QRP[31]=0;
+		Global.QRP[32]=0;
+		Global.QRP[33]=0;
+		
+		
+		Global.QRP[5]=Eye Position(Event Player);
+		Global.QRP[6]=Ray Cast Hit Position(Eye Position(Event Player), Eye Position(Event Player) + Facing Direction Of(Event Player) * 100, Null, Event Player, False);
+		Global.QRP[7]=Facing Direction Of(Event Player);
+		
+		
+		Global.QRP[11]=Cross Product(Global.QRP[2]-Global.QRP[1],Global.QRP[3]-Global.QRP[1]);
+		if (Dot Product(Global.QRP[7],Global.QRP[11])>0);
+			Global.QRP[0]=Global.QRP[1];
+			Global.QRP[1]=Global.QRP[4];
+			Global.QRP[4]=Global.QRP[0];
+			Global.QRP[0]=Global.QRP[2];
+			Global.QRP[2]=Global.QRP[3];
+			Global.QRP[3]=Global.QRP[0];
+Log To Inspector(Custom String("Reverse"));
+		end;
+		
+		Global.QRP[11]=Cross Product(Global.QRP[2]-Global.QRP[1],Global.QRP[3]-Global.QRP[1]);
+
+		if (Dot Product(Global.QRP[7],Global.QRP[11])==0);
+			Log To Inspector(Custom String("Ray is parallel to the plane, no intersection"));	//▒
+			abort;
+		end;
+		
+		Global.QRP[12]=Dot Product(Global.QRP[1]-Global.QRP[5],Global.QRP[11])/Dot Product(Global.QRP[7],Global.QRP[11]);
+		if (Global.QRP[12]<0);
+			Log To Inspector(Custom String("Intersection point is behind the ray"));	//▒
+			abort;
+		end;
+		
+		Global.QRP[20]=Global.QRP[5]+Global.QRP[7]*Global.QRP[12];
+		
+		for Player Variable(Event Player,Tmp,0,4,1);
+			Global.QRP[31]=Global.QRP[Event Player.Tmp+1];
+			Global.QRP[32]=Global.QRP[Modulo(Event Player.Tmp+1,4)+1];
+			Global.QRP[33]=Cross Product(Global.QRP[32]-Global.QRP[31],Global.QRP[20]-Global.QRP[31]);
+			if (Dot Product(Global.QRP[33],Global.QRP[11])<0);
+				Log To Inspector(Custom String("Intersection point is outside the polygon"));	//▒
+				abort;
+			end;
+		end;
+		
+		
+		Global.QRP[0]=Global.QRP[20];
+		Create Effect(All Players(All Teams), Sphere, Color(Red), Global.QRP[0], 0.1, Visible To);
+		
+Log To Inspector(Custom String("---------------------------------"));
+Log To Inspector(Custom String("0: {0}",Global.QRP[0]));
+Log To Inspector(Custom String("A: {0}",Global.QRP[1]));
+Log To Inspector(Custom String("B: {0}",Global.QRP[2]));
+Log To Inspector(Custom String("C: {0}",Global.QRP[3]));
+Log To Inspector(Custom String("D: {0}",Global.QRP[4]));
+Log To Inspector(Custom String("S: {0}",Global.QRP[5]));
+Log To Inspector(Custom String("H: {0}",Global.QRP[6]));
+Log To Inspector(Custom String("D: {0}",Global.QRP[7]));
+Log To Inspector(Custom String("Normal: {0}",Global.QRP[11]));
+Log To Inspector(Custom String("t: {0}",Global.QRP[12]));
+Log To Inspector(Custom String("Intersects: {0}",Global.QRP[20]));
+Log To Inspector(Custom String("---------------------------------"));
+
+	}
+}
