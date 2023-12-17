@@ -154,6 +154,8 @@ rule("Debug Coords")
 			Visible To and String, Default Visibility);
 		Create HUD Text(Event Player, Eye Position(Event Player), Null, Null, Left, 0, Color(White), Color(White), Color(White),
 			Visible To and String, Default Visibility);
+		Create HUD Text(Event Player, Position Of(Event Player), Null, Null, Left, 0, Color(White), Color(White), Color(White),
+			Visible To and String, Default Visibility);
 	}
 }
 
